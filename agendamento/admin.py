@@ -3,9 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 from .models import Usuario, Sala, Agendamento, AgendamentoUsuario
 
 
-# ============================
-#  Usuario
-# ============================
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     model = Usuario
@@ -22,9 +19,6 @@ class UsuarioAdmin(UserAdmin):
     )
 
 
-# ============================
-#  Agendamento + Inline de Usuários
-# ============================
 class AgendamentoUsuarioInline(admin.TabularInline):
     model = AgendamentoUsuario
     extra = 1
@@ -38,9 +32,6 @@ class AgendamentoAdmin(admin.ModelAdmin):
     inlines = [AgendamentoUsuarioInline]
 
 
-# ============================
-#  Sala
-# ============================
 @admin.register(Sala)
 class SalaAdmin(admin.ModelAdmin):
     list_display = ('id', 'nome', 'capacidade', 'tipo_sala', 'criador')
@@ -48,9 +39,6 @@ class SalaAdmin(admin.ModelAdmin):
     search_fields = ('nome', 'criador__username', 'criador__email')
 
 
-# ============================
-#  AgendamentoUsuario (separado)
-# ============================
 @admin.register(AgendamentoUsuario)
 class AgendamentoUsuarioAdmin(admin.ModelAdmin):
     list_display = ('id', 'agendamento', 'usuario')

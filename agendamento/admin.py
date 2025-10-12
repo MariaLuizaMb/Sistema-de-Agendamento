@@ -30,6 +30,8 @@ class AgendamentoAdmin(admin.ModelAdmin):
     list_filter = ('sala', 'data', 'status')
     search_fields = ('sala__nome', 'criador__username', 'criador__email')
     inlines = [AgendamentoUsuarioInline]
+    fields = ('sala', 'data', 'hora_inicio', 'hora_fim', 'status', 'criador')
+    readonly_fields = ('criador',)
 
 
 @admin.register(Sala)

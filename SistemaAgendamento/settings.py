@@ -55,7 +55,7 @@ ROOT_URLCONF = 'SistemaAgendamento.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'agendamento_salas',     # nome do banco de dados
         'USER': 'postgres',     # usuário 
-        'PASSWORD': '1289', # senha do usuário
+        'PASSWORD': '1289',     # senha do usuário
         'HOST': 'localhost',       # localhost ou o IP do servidor do BD
         'PORT': '5432',            # porta padrão do PostgreSQL
     }
@@ -120,6 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

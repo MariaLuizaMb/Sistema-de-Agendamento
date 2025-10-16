@@ -17,9 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from agendamento import views
+from agendamento.views import CustomLoginView, home
 
 urlpatterns = [
-    path('', views.home, name='home'),
+
     path('admin/', admin.site.urls),
+    path('', CustomLoginView.as_view(), name='login'),  # login na raiz
+    path('home/', home, name='home'),
+    path('conta/', include('django.contrib.auth.urls')),
  
 ]

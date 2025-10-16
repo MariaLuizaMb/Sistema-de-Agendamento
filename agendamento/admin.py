@@ -1,47 +1,33 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from .models import Usuario, Sala, Agendamento, AgendamentoUsuario
 
 
 @admin.register(Usuario)
-class UsuarioAdmin(UserAdmin):
-    model = Usuario
-    list_display = ('id', 'username', 'email', 'tipo_usuario', 'is_active', 'is_staff', 'is_superuser')
-    list_filter = ('tipo_usuario', 'is_active', 'is_staff', 'is_superuser')
+class UsuarioAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'tipo_usuario', 'is_active')
     search_fields = ('username', 'email')
-
-    # Adiciona o campo tipo_usuario nos formulários de edição/criação
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('tipo_usuario',)}),
-    )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('tipo_usuario',)}),
-    )
-
-
-class AgendamentoUsuarioInline(admin.TabularInline):
-    model = AgendamentoUsuario
-    extra = 1
-
-
-@admin.register(Agendamento)
-class AgendamentoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sala', 'data', 'hora_inicio', 'hora_fim', 'status', 'criador')
-    list_filter = ('sala', 'data', 'status')
-    search_fields = ('sala__nome', 'criador__username', 'criador__email')
-    inlines = [AgendamentoUsuarioInline]
-    fields = ('sala', 'data', 'hora_inicio', 'hora_fim', 'status', 'criador')
-    readonly_fields = ('criador',)
+    list_filter = ('tipo_usuario', 'is_active')
 
 
 @admin.register(Sala)
 class SalaAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nome', 'capacidade', 'tipo_sala', 'criador')
+    list_display = ('nome', 'tipo_sala', 'capacidade', 'criador')
+    search_fields = ('nome',)
     list_filter = ('tipo_sala',)
-    search_fields = ('nome', 'criador__username', 'criador__email')
+
+
+@admin.register(Agendamento)
+class AgendamentoAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'sala', 'data', 'hora_inicio', 'hora_fim', 'status', 'criador')
+    list_display_links = ('nome',)
+    
+    list_filter = ('status', 'data', 'sala')
+    search_fields = ('nome', 'sala__nome', 'criador__username')
+    ordering = ('-data', 'hora_inicio')
+    date_hierarchy = 'data'
 
 
 @admin.register(AgendamentoUsuario)
 class AgendamentoUsuarioAdmin(admin.ModelAdmin):
-    list_display = ('id', 'agendamento', 'usuario')
-    search_fields = ('agendamento__sala__nome', 'usuario__username', 'usuario__email')
+    list_display = ('agendamento', 'usuario')
+    search_fields = ('agendamento__nome', 'usuario__username')

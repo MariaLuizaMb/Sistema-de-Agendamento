@@ -8,7 +8,7 @@ class Usuario(AbstractUser):
         ('Admin', 'Admin'),
         ('Comum', 'Comum'),
     ]
-    email = models.EmailField(unique=True) # Torna o email único
+    email = models.EmailField(unique=True)  # Torna o email único
     tipo_usuario = models.CharField(max_length=10, choices=TIPO_CHOICES, default='Comum')   
 
     def __str__(self):
@@ -53,6 +53,7 @@ class Agendamento(models.Model):
         blank=True,
         related_name="agendamentos_criados"
     )
+    nome = models.CharField(max_length=100, verbose_name="Nome da Reunião")
     usuarios = models.ManyToManyField(Usuario, through='AgendamentoUsuario')
     data = models.DateField()
     hora_inicio = models.TimeField()
@@ -63,7 +64,7 @@ class Agendamento(models.Model):
         unique_together = ('sala', 'data', 'hora_inicio', 'hora_fim')
 
     def __str__(self):
-        return f"{self.sala.nome} em {self.data} das {self.hora_inicio} às {self.hora_fim}"
+        return f"{self.nome} - {self.sala.nome} ({self.data} {self.hora_inicio}-{self.hora_fim})"
 
     def clean(self):
         # Verifica conflito de horários
@@ -82,7 +83,6 @@ class Agendamento(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()  # validação antes de salvar
         super().save(*args, **kwargs)
-
 
 
 class AgendamentoUsuario(models.Model):

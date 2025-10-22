@@ -4,9 +4,9 @@ from .models import Usuario, Sala, Agendamento, AgendamentoUsuario
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'tipo_usuario', 'is_active')
+    list_display = ('username','email', 'tipo_usuario', 'cargo', 'is_active')
     search_fields = ('username', 'email')
-    list_filter = ('tipo_usuario', 'is_active')
+    list_filter = ('tipo_usuario', 'cargo', 'is_active')
 
 
 @admin.register(Sala)
@@ -18,14 +18,12 @@ class SalaAdmin(admin.ModelAdmin):
 
 @admin.register(Agendamento)
 class AgendamentoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'sala', 'data', 'hora_inicio', 'hora_fim', 'status', 'criador')
-    list_display_links = ('nome',)
-    
-    list_filter = ('status', 'data', 'sala')
-    search_fields = ('nome', 'sala__nome', 'criador__username')
-    ordering = ('-data', 'hora_inicio')
+    list_display = ('codigo_agendamento', 'nome', 'sala', 'data', 'hora_inicio', 'hora_fim', 'status', 'criador')
+    list_filter = ('status', 'sala', 'data')
+    search_fields = ('codigo_agendamento', 'nome', 'sala__nome', 'criador__username')
+    ordering = ('-data', '-hora_inicio')
     date_hierarchy = 'data'
-
+    readonly_fields = ('codigo_agendamento',)
 
 @admin.register(AgendamentoUsuario)
 class AgendamentoUsuarioAdmin(admin.ModelAdmin):

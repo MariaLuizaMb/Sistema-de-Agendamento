@@ -1,6 +1,7 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 
 class Usuario(AbstractUser):
@@ -8,8 +9,18 @@ class Usuario(AbstractUser):
         ('Admin', 'Admin'),
         ('Comum', 'Comum'),
     ]
-    email = models.EmailField(unique=True)  # Torna o email único
-    tipo_usuario = models.CharField(max_length=10, choices=TIPO_CHOICES, default='Comum')   
+    CARGO_CHOICES = [
+        ('Diretor', 'Diretor'),
+        ('Gerente', 'Gerente'),
+        ('Coordenador', 'Coordenador'),
+        ('Funcionario', 'Funcionário'),
+    ]
+    email = models.EmailField(unique=True)
+    tipo_usuario = models.CharField(max_length=10, choices=TIPO_CHOICES, default='Comum')
+    cargo = models.CharField(max_length=100, choices=CARGO_CHOICES, blank=False, null=False)   
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return f"{self.username} ({self.tipo_usuario})"
@@ -55,19 +66,34 @@ class Agendamento(models.Model):
     )
     nome = models.CharField(max_length=100, verbose_name="Nome da Reunião")
     usuarios = models.ManyToManyField(Usuario, through='AgendamentoUsuario')
-    data = models.DateField()
-    hora_inicio = models.TimeField()
-    hora_fim = models.TimeField()
+    data = models.DateField(verbose_name="Data da Reunião")
+    hora_inicio = models.TimeField(verbose_name="Hora de Início")
+    hora_fim = models.TimeField(verbose_name="Hora de Término")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ativo')
+    codigo_agendamento = models.CharField(max_length=20, unique=True, blank=True, null=True)
 
     class Meta:
         unique_together = ('sala', 'data', 'hora_inicio', 'hora_fim')
+        ordering = ['data', 'hora_inicio']
 
     def __str__(self):
-        return f"{self.nome} - {self.sala.nome} ({self.data} {self.hora_inicio}-{self.hora_fim})"
+        return f"{self.nome} - {self.sala.nome} ({self.data:%d/%m/%Y}, {self.hora_inicio:%H:%M} às {self.hora_fim:%H:%M})"
 
     def clean(self):
-        # Verifica conflito de horários
+        """Validação personalizada de horários e conflitos."""
+        # Hora de término deve ser posterior à de início
+        if self.hora_fim <= self.hora_inicio:
+            raise ValidationError("A hora de término deve ser posterior à hora de início.")
+
+        # Não permitir agendamentos no passado
+        agora = timezone.localtime()
+        data_hora_inicio = timezone.make_aware(
+            timezone.datetime.combine(self.data, self.hora_inicio)
+        )
+        if data_hora_inicio < agora:
+            raise ValidationError("Não é possível criar agendamentos no passado.")
+
+        # Verificação de conflitos
         conflitos = Agendamento.objects.filter(
             sala=self.sala,
             data=self.data,
@@ -81,8 +107,15 @@ class Agendamento(models.Model):
             raise ValidationError("Já existe um agendamento que conflita com este horário.")
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # validação antes de salvar
+        self.full_clean()
+        is_new = self.pk is None
+
         super().save(*args, **kwargs)
+
+        # Se for um agendamento novo e ainda não tem código
+        if is_new and self.criador and not self.codigo_agendamento:
+            self.codigo_agendamento = f"{self.criador.id:02d}{self.id:02d}"
+            super().save(update_fields=['codigo_agendamento'])
 
 
 class AgendamentoUsuario(models.Model):
@@ -91,6 +124,7 @@ class AgendamentoUsuario(models.Model):
 
     class Meta:
         unique_together = ('agendamento', 'usuario')
+        
 
     def __str__(self):
         return f"{self.usuario.username} em {self.agendamento}"

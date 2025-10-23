@@ -73,7 +73,6 @@ Sistema-de-Agendamento/
 │   ├── views.py                     # Lógica das views e controladores
 │
 ├── SistemaAgendamento/              # Diretório de configuração principal
-│   ├── __pycache__/
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py                  # Configurações globais do projeto

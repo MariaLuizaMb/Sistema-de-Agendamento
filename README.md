@@ -21,7 +21,8 @@ O projeto foi construído utilizando o **framework Django (Python)** e o banco d
 
 O diagrama abaixo representa a estrutura lógica do banco de dados do sistema, destacando as entidades principais e seus relacionamentos:
 
-![Modelo Conceitual]
+![Modelo Conceitual]<img width="1748" height="1264" alt="Diagrama ER de banco de dados (pé de galinha)" src="https://github.com/user-attachments/assets/9ba47cab-4d3f-4563-8999-3500afa5a14e" />
+
 
 ### Descrição das Entidades
 

@@ -12,8 +12,6 @@ O projeto foi construído utilizando o **framework Django (Python)** e o banco d
 - **Python 3.12+**
 - **Django 5.2.6**
 - **PostgreSQL**
-- **HTML5 / CSS3**
-- **Tailwind CSS (para estilização)**
 - **Virtualenv**
 - **VS Code**
 
@@ -23,7 +21,7 @@ O projeto foi construído utilizando o **framework Django (Python)** e o banco d
 
 O diagrama abaixo representa a estrutura lógica do banco de dados do sistema, destacando as entidades principais e seus relacionamentos:
 
-![Modelo Conceitual](static/images/modelo_conceitual.png)
+![Modelo Conceitual]
 
 ### Descrição das Entidades
 
@@ -69,7 +67,6 @@ Sistema-de-Agendamento/
 │   │   ├── __init__.py
 │   ├── admin.py                     # Configuração do painel administrativo
 │   ├── apps.py                      # Registro da aplicação
-│   ├── form.py                      # Formulários do sistema
 │   ├── models.py                    # Modelos de dados e regras de negócio
 │   ├── tests.py                     # Testes automatizados
 │   ├── views.py                     # Lógica das views e controladores
@@ -81,27 +78,11 @@ Sistema-de-Agendamento/
 │   ├── settings.py                  # Configurações globais do projeto
 │   ├── urls.py                      # Rotas e URLs do sistema
 │   ├── wsgi.py                      # Interface com o servidor web
-│
-├── static/                          # Arquivos estáticos
-│   ├── css/
-│   │   ├── input.css
-│   │   ├── output.css
-│   ├── images/
-│   │   ├── fundoTelas.png
-│
-├── templates/                       # Páginas HTML do sistema
-│   ├── registration/                # Páginas de autenticação
-│   │   ├── login.html
-│   │   ├── register.html
-│   ├── base.html                    # Template base
-│   ├── base_interna.html            # Template base para páginas autenticadas
-│   ├── index.html                   # Página inicial
+│            
 │
 ├── venv/                            # Ambiente virtual do projeto
 │
-├── manage.py                        # Script de administração do Django
-├── package.json                     # Dependências front-end
-├── package-lock.json
+├── manage.py                        # Script de administração do Djan
 ├── .gitignore                       # Arquivos ignorados pelo Git
 └── README.md                        # Documentação do projeto
 ```
@@ -152,8 +133,6 @@ Essas verificações garantem a consistência e a integridade dos dados no siste
 
 O arquivo `admin.py` registra as classes no **Django Admin**, permitindo:
 - Visualizar, criar, editar e excluir usuários, salas e agendamentos.  
-- Aplicar filtros por data, status, tipo de sala e cargo.  
-- Pesquisar registros de forma otimizada.
 
 As classes registradas:
 - `UsuarioAdmin`
@@ -222,14 +201,3 @@ O sistema estará disponível em:
 📍 **http://127.0.0.1:8000/**
 
 ---
-
-## 🧾 Conclusão
-
-O **Sistema de Agendamento de Salas** implementa de forma completa os conceitos de:
-- **Modelagem de dados relacional**  
-- **Programação Orientada a Objetos**  
-- **Validação e integridade de dados**  
-- **Autenticação personalizada**  
-- **Integração entre front-end e back-end**
-
-Esse projeto oferece uma solução robusta e escalável para o controle eficiente de salas corporativas, garantindo integridade, segurança e facilidade de uso.

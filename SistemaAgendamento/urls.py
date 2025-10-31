@@ -24,6 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', CustomLoginView.as_view(), name='login'),  # login na raiz
     path('home/', home, name='home'),
-    path('conta/', include('django.contrib.auth.urls')),
- 
+    path('criar_agendamento/', views.criar_agendamento, name='criar_agendamento'),
 ]

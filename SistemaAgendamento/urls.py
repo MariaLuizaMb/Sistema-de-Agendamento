@@ -23,6 +23,7 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('', CustomLoginView.as_view(), name='login'),  # login na raiz
+    path('register/', views.register_view, name='register'),
     path('home/', home, name='home'),
     path('criar_agendamento/', views.criar_agendamento, name='criar_agendamento'),
 ]

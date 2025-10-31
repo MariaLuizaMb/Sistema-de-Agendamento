@@ -1,0 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap");
+
+:root{
+    --font-sans: "Roboto Condensed", sans-serif;
+
+    --text--heading-h1: 5,25rem; /* 84px */
+    --text--heading-h2: 4rem; /* 64px */
+    --text--heading-h3: 3rem; /* 48px */
+    --text-heading-h4: 2.125rem; /* 34px */
+    --text--heading-h5: 2rem; /* 32px */
+    --text-paragraph-lg: 1.75rem; /* 28px */
+    --text-paragraph-lg-md: 1.65rem; /* 26px */
+    --text-paragraph-md: 1.5rem; /* 24px */
+    --text-paragraph-sm: 1.375rem; /* 22px */
+
+
+    /*--color-*: initial;*/ 
+    --color-white: #ffffff;
+
+    --color-black: #000000;
+    --color-blue-40: #e9ebf8;
+    --color-blue-50: #e6fbfd;
+    --color-blue-100: #b1f3f8;
+    --color-blue-200: #8cedf4;
+    --color-blue-300: #57e5ef;
+    --color-blue-400: #36e0ec;
+    --color-blue-500: #04d8e7;
+    --color-blue-600: #04c5d2;
+    --color-blue-700: #0399a4;
+    --color-blue-800: #02777f;
+    --color-blue-900: #025b61;
+
+    --color-darkBlue-50: #e8eaeb;
+    --color-darkBlue-100: #b8bcc1;
+    --color-darkBlue-200: #969ca3;
+    --color-darkBlue-300: #666f79;
+    --color-darkBlue-400: #48535f;
+    --color-darkBlue-500: #1a2837;
+    --color-darkBlue-600: #182432;
+    --color-darkBlue-700: #121c27;
+    --color-darkBlue-800: #0e161e;
+    --color-darkBlue-900: #0b1117;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

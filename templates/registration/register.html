@@ -5,64 +5,48 @@
 
 
 {% block content %}
-<div class="container mt-5" style="max-width: 540px;">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h3 class="card-title mb-4 text-center">Criar conta</h3>
+<div class="flex flex-col justify-center items-start flex-grow ">
+        <form method="POST" class="w-full max-w-md">
+            {% csrf_token %}
+            <h4 class="text-white text-heading-h4 -mb-4 text-start">BEM-VINDO!</h4>
+            <h3 class="text-white text-heading-h2 mb-5 text-start">Crie sua conta para acessar o sistema.</h3>
+            
+            <!--Campo para nome-->
+            <div class="text-white mb-3">
+              {{ form.username }}
+            </div>
 
-      {% if form and form.non_field_errors %}
-        <div class="alert alert-danger">
-          {{ form.non_field_errors }}
-        </div>
-      {% endif %}
+            <!--Campo para email-->
+            <div class="text-white mb-3">
+              {{ form.email }}
+            </div>
 
-      <form method="post" novalidate>
-        {% csrf_token %}
+            <!--Campo para senha-->
+            <div class="text-white mb-3">
+              {{ form.password1 }}
+            </div>
 
-        <div class="mb-3">
-          <label for="id_nome" class="form-label">Nome</label>
-          <input type="text" class="form-control" id="id_nome" name="nome" placeholder="Seu nome completo" required>
-          {% if form and form.nome.errors %}
-            <div class="text-danger small">{{ form.nome.errors.0 }}</div>
-          {% endif %}
-        </div>
+            <!--Campo para confirmar senha-->
+            <div class="text-white mb-5">
+              {{ form.password2 }}
+            </div>
 
-        <div class="mb-3">
-          <label for="id_email" class="form-label">Email</label>
-          <input type="email" class="form-control" id="id_email" name="email" placeholder="seu@exemplo.com" required>
-          {% if form and form.email.errors %}
-            <div class="text-danger small">{{ form.email.errors.0 }}</div>
-          {% endif %}
-        </div>
+            <button class="bg-blue-800 w-11/12 h-12 rounded-md mb-6 hover:bg-blue-700 transition-colors text-white" type="submit">
+                Registrar
+            </button>
 
-        <div class="mb-3">
-          <label for="id_password1" class="form-label">Senha</label>
-          <input type="password" class="form-control" id="id_password1" name="password1" placeholder="Senha" required>
-          {% if form and form.password1.errors %}
-            <div class="text-danger small">{{ form.password1.errors.0 }}</div>
-          {% endif %}
-        </div>
+            {% if messages %}
+            <ul class="w-11/12 text-center text-sm text-red-400 mt-2">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
 
-        <div class="mb-3">
-          <label for="id_password2" class="form-label">Confirmar senha</label>
-          <input type="password" class="form-control" id="id_password2" name="password2" placeholder="Repita a senha" required>
-          {% if form and form.password2.errors %}
-            <div class="text-danger small">{{ form.password2.errors.0 }}</div>
-          {% endif %}
-        </div>
-
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary">Registrar</button>
-        </div>
-      </form>
-
-      <hr class="my-4">
-
-      <p class="text-center mb-0">
-        Já tem uma conta?
-        <a href="{% url 'login' %}" class="link-primary">Entrar</a>
-      </p>
+            <p class="w-11/12 text-center text-sm text-white mt-4">
+                Já tem uma conta?
+                <a href="{% url 'login' %}" class="text-blue-600 hover:text-blue-400 hover:underline transition-colors duration-200">Entrar</a>
+            </p>
+        </form>
     </div>
-  </div>
-</div>
 {% endblock %}

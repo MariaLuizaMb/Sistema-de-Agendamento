@@ -1,4 +1,4 @@
-from django.db import models, transaction
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -15,7 +15,7 @@ class Usuario(AbstractUser):
         ('Coordenador', 'Coordenador'),
         ('Funcionario', 'Funcionário'),
     ]
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, blank=False, null=False)
     tipo_usuario = models.CharField(max_length=10, choices=TIPO_CHOICES, default='Comum')
     cargo = models.CharField(max_length=100, choices=CARGO_CHOICES, blank=False, null=False)   
     

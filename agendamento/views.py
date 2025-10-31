@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from .form_agendamento import AgendamentoForm
+from .form_registro import RegisterForm
 
 class CustomLoginView(View):
     template_name = 'registration/login.html'
@@ -44,6 +45,19 @@ class CustomLoginView(View):
         # Tudo certo → faz login e redireciona
         login(request, user)
         return redirect('home')
+    
+def register_view(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Conta criada com sucesso. Faça login.")
+            return redirect('login')
+        else:
+            messages.error(request, "Corrija os erros abaixo.")
+    else:
+        form = RegisterForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 @login_required
 def home(request):

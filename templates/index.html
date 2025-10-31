@@ -1,0 +1,307 @@
+{% extends 'base_interna.html'%}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Página Inicial | Sistema de Agendamento{% endblock %}
+
+{% block content %}
+<div class="w-full ">
+    <div class="content-center-space" style="min-height: calc(100vh - 25rem - 96px); display:flex; align-items:start; justify-content:center; flex-direction:column; padding:1rem 0;">
+        <h2 class="-mb-1 text-heading-h3">Agendamentos</h2>
+        <p class="-mt-1 text-heading-h5">Consulte aqui todos os agendamentos do sistema!</p>
+    </div>
+
+    <!-- painel fixo no fim da página com altura específica (ajuste h-96 conforme necessário) -->
+    <div id="agendamentosPanel" class="fixed left-0 right-0 bottom-0 px-20 z-40">
+        <div class="mx-auto w-full bg-blue-900 rounded-t-xl shadow-lg flex flex-col overflow-hidden" style=" height:28rem; ">
+            <!-- barra de pesquisa / filtro / botão: não rola -->
+            <div class="px-4 py-3 flex items-center gap-4 flex-none">
+                <form class="flex w-full items-center justify-between" method="get" >
+                    <input type="text" name="busca" value="{{ busca }}" placeholder="Pesquisar Agendamentos"
+                           class="bg-white rounded-md px-3 py-1 w-3/4">
+                    <div class="flex items-center ml-4 ">
+                        <select id="ordenar_por" name="ordenar_por" onchange="this.form.submit()" class="appearance-none bg-white rounded-md px-2 py-1">
+                            <option disabled selected hidden>Filtrar</option>
+                            <option value="nome" {% if ordenar_por == 'nome' %}selected{% endif %}>Nome</option>
+                            <option value="data" {% if ordenar_por == 'data' %}selected{% endif %}>Data</option>
+                            <option value="sala" {% if ordenar_por == 'sala' %}selected{% endif %}>Sala</option>
+                            <option value="criador" {% if ordenar_por == 'criador' %}selected{% endif %}>Criador</option>
+                            <option value="codigo_agendamento" {% if ordenar_por == 'codigo_agendamento' %}selected{% endif %}>ID</option>
+                        </select>
+                        {% if ordenar_por %}
+                            <a id="limparFiltro"
+                               class="ml-2 px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors duration-200"
+                               href="?{% if busca %}busca={{ busca|urlencode }}{% endif %}">
+                                Limpar filtro
+                            </a>
+                        {% endif %}
+                        <button type="button" id="abrirModal"
+                                class="ml-3 px-3 py-1 bg-darkBlue-900 text-white rounded-md hover:bg-blue-800 transition-colors duration-200">
+                            Nova Reunião
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- container da tabela com scroll interno -->
+            <div class="flex-1 bg-white  overflow-hidden rounded-t-lg">
+                <div class="h-full overflow-y-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-400 sticky top-0">
+                            <tr class="border-b border-darkBlue-900">
+                                <th class="text-left px-5 py-2">ID</th>
+                                <th class="text-left px-5 py-2">Nome</th>
+                                <th class="text-left px-5 py-2">Sala</th>
+                                <th class="text-left px-5 py-2">Criador</th>
+                                <th class="text-left px-5 py-2">Horário</th>
+                                <th class="text-left px-5 py-2">Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for agendamento in agendamentos %}
+                            <tr class="border-b border-darkBlue-900 hover:bg-blue-100">
+                                <td class="px-5 py-2">{{ agendamento.codigo_agendamento }}</td>
+                                <td class="px-5 py-2">{{ agendamento.nome }}</td>
+                                <td class="px-5 py-2">{{ agendamento.sala }}</td>
+                                <td class="px-5 py-2">{{ agendamento.criador }}</td>
+                                <td class="px-5 py-2">{{ agendamento.hora_inicio }}</td>
+                                <td class="pl-5 py-2">{{ agendamento.data|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="px-4 py-2 text-center">Nenhum agendamento encontrado.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔹 Modal -->
+<div id="modalAgendamento"
+     class=" hidden fixed inset-0 z-50  items-center justify-center transition-opacity duration-300 opacity-0"
+     style="background-color: rgba(255,255,255,0.08); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);">
+    <div id="modalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 relative transform scale-95 transition-all duration-300">   
+     <!-- Fechar -->
+        <button id="fecharModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl">✕</button>
+
+        <h2 class="text-2xl font-semibold text-darkBlue-900 mb-6 text-center">Agendar Nova Reunião</h2>
+
+        <form id="formAgendamento" method="POST" action="{% url 'criar_agendamento' %}" class="flex flex-col gap-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Reunião</label>
+                {{ form.nome|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Participantes</label>
+                {{ form.usuarios|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+                {{ form.data|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+            </div>
+            <div class="flex gap-3">
+                <div class="w-1/2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Início</label>
+                    {{ form.hora_inicio|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+                </div>
+                <div class="w-1/2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Término</label>
+                    {{ form.hora_fim|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
+                {{ form.sala|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+            </div>
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button type="button" id="cancelarBtn"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+                <button type="submit" id="submitBtn"
+                        class="px-4 py-2 bg-darkBlue-900 text-white rounded-lg hover:bg-blue-800 transition">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ✅ Toast de sucesso -->
+<div id="toast-sucesso" 
+     class="hidden fixed top-5 right-5 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 opacity-0 z-50">
+    Agendamento criado com sucesso! ✅
+</div>
+
+<!-- ❌ Toast de Erro -->
+<div id="toast-erro" 
+     class="hidden fixed top-5 right-5 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 opacity-0 z-50">
+    Ocorreu um erro ao salvar o agendamento. ❌
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('modalAgendamento');
+    const abrir = document.getElementById('abrirModal');
+    const fechar = document.getElementById('fecharModal');
+    const cancelar = document.getElementById('cancelarBtn');
+    const form = document.getElementById('formAgendamento');
+    const tbody = document.querySelector('tbody');
+    const ordenarSelect = document.getElementById('ordenar_por');
+    const toastSucesso = document.getElementById('toast-sucesso');
+    const toastErro = document.getElementById('toast-erro');
+    const submitBtn = document.getElementById('submitBtn');
+    const pageContent = document.getElementById('pageContent');
+
+    // Utilitários de UI
+    function show(element) {
+        element.classList.remove('hidden', 'opacity-0');
+        element.classList.add('flex', 'opacity-100');
+        document.body.classList.add('overflow-hidden');
+        if (pageContent) pageContent.classList.add('modal-blurred-fallback');
+        document.body.classList.add('overflow-hidden');
+    }
+    function hide(element) {
+        element.classList.remove('opacity-100');
+        element.classList.add('opacity-0');
+        setTimeout(() => {
+            element.classList.add('hidden');
+            element.classList.remove('flex');
+            document.body.classList.remove('overflow-hidden');
+        }, 250);
+    }
+    function mostrarToast(elemento, mensagem) {
+        elemento.textContent = mensagem;
+        show(elemento);
+        setTimeout(() => hide(elemento), 3000);
+    }
+    function mostrarSucesso(msg) { mostrarToast(toastSucesso, msg || 'Agendamento criado com sucesso! ✅'); }
+    function mostrarErro(msg) { mostrarToast(toastErro, msg || 'Erro ao salvar o agendamento. ❌'); }
+
+if (ordenarSelect) {
+    ordenarSelect.addEventListener('change', e => {
+      // sortTableBy(e.target.value); // use a função sortTableBy já fornecida
+    });
+  }
+    // Abre/fecha modal (checagens para evitar erros se elementos não existem)
+if (abrir && modal) {
+        abrir.addEventListener('click', () => {
+            // limpar erros antigos...
+            show(modal);
+            const primeiroCampo = modal.querySelector('input, select, textarea, button');
+            if (primeiroCampo) primeiroCampo.focus();
+        });
+    }
+    if (fechar) fechar.addEventListener('click', () => hide(modal));
+    if (cancelar) cancelar.addEventListener('click', () => hide(modal));
+    window.addEventListener('click', (e) => { if (e.target === modal) hide(modal); });
+
+    // Submissão AJAX segura
+    if (form) {
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            if (!form.action) {
+                mostrarErro("URL de submissão inválida.");
+                return;
+            }
+
+            // desativa botão para evitar múltiplos envios
+            if (submitBtn) submitBtn.disabled = true;
+
+            const formData = new FormData(form);
+            // limpa mensagens anteriores
+            modal.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+            const globalErr = document.getElementById('form-error-global');
+            if (globalErr) globalErr.textContent = '';
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                    },
+                    body: formData
+                });
+
+                // tenta parsear JSON, se falhar mostra erro genérico
+                let data;
+                try {
+                    data = await response.json();
+                } catch (err) {
+                    throw new Error('Resposta inválida do servidor.');
+                }
+
+                if (data.success) {
+                    // adiciona linha se tbody existir
+                    if (tbody && data.agendamento) {
+                        const row = `
+                            <tr class="border-b border-darkBlue-900 hover:bg-blue-100">
+                                <td class="px-5 py-2">${data.agendamento.codigo_agendamento || ''}</td>
+                                <td class="px-5 py-2">${data.agendamento.nome || ''}</td>
+                                <td class="px-5 py-2">${data.agendamento.sala || ''}</td>
+                                <td class="px-5 py-2">${data.agendamento.criador || ''}</td>
+                                <td class="px-5 py-2">${data.agendamento.hora_inicio || ''}</td>
+                                <td class="pl-5 py-2">${data.agendamento.data || ''}</td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', row);
+                    }
+                    form.reset();
+                    hide(modal);
+                    mostrarSucesso();
+                } else {
+                    // suporta três formatos de erro esperados:
+                    // 1) data.error (string), 2) data.errors (dict de campo -> lista), 3) mensagens de validação genéricas
+                    if (data.errors && typeof data.errors === 'object') {
+                        // mostra por campo se possível
+                        Object.keys(data.errors).forEach(field => {
+                            const fieldEl = modal.querySelector(`.field-error[data-field="${field}"]`);
+                            if (fieldEl) {
+                                const msgs = Array.isArray(data.errors[field]) ? data.errors[field].join(' ') : String(data.errors[field]);
+                                fieldEl.textContent = msgs;
+                            }
+                        });
+                        // se houver um não-campo, mostra no global
+                        if (data.error) {
+                            if (globalErr) globalErr.textContent = data.error;
+                            else mostrarErro(data.error);
+                        } else {
+                            if (globalErr) globalErr.textContent = 'Verifique os campos do formulário.';
+                            else mostrarErro('Verifique os campos do formulário.');
+                        }
+                    } else if (data.error) {
+                        if (globalErr) globalErr.textContent = data.error;
+                        else mostrarErro(data.error);
+                    } else {
+                        mostrarErro('Erro ao salvar o agendamento. Verifique os campos.');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro na requisição:', error);
+                mostrarErro("Erro inesperado. Tente novamente.");
+            } finally {
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+    }
+});
+</script>
+
+<style>
+/* fallback para navegadores sem backdrop-filter */
+.modal-blurred-fallback {
+  transition: filter .25s ease-in-out;
+  user-select: none;
+}
+
+/* mantém toasts como antes */
+#toast-sucesso, #toast-erro {
+  transform: translateY(-10px);
+}
+.opacity-100 {
+  transform: translateY(0);
+}
+</style>
+{% endblock %}

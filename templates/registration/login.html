@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login | Sistema de Agendamento{% endblock %}
+
+{% block content %}
+    <div class="flex flex-col justify-center items-start flex-grow ">
+        <form method='POST' >
+             {% csrf_token %}
+            <h4 class="text-white text-heading-h4 -mb-4 text-start">BEM-VINDO DE VOLTA!</h4>
+            <h3 class="text-white text-heading-h2 mb-5 text-start">Faça login para acessar.</h3>
+
+            <div class="text-white mb-3">
+                <label for="email" class="sr-only">Email</label>
+                <input
+                    id="email"
+                    class="bg-darkBlue-400 w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50"
+                    type="email"
+                    name="email"
+                    placeholder="Email@gmail.com"
+                    autocomplete="email"
+                    required
+                />
+            </div>
+
+            <div class="text-white mb-5">
+                <label for="password" class="sr-only">Senha</label>
+                <input
+                    id="password"
+                    class="bg-darkBlue-400 w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50"
+                    type="password"
+                    name="password"
+                    placeholder="Senha"
+                    autocomplete="current-password"
+                    required
+                />        
+            </div>
+
+            <button class="bg-blue-800 w-11/12 h-12 rounded-md mb-6 hover:bg-blue-700 transition-colors text-white" type="submit">Entrar</button>
+            {% if messages %}
+            <ul class="w-11/12 text-center text-sm text-red-400 mt-2">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <p class="w-11/12 text-center text-sm text-white">
+                Não tem uma conta?
+                <a  href="#" class="text-blue-600 hover:text-blue-400 hover:underline transition-colors duration-200 ">Crie aqui!</a>
+            </p>
+        </form>
+    </div>
+{% endblock %}

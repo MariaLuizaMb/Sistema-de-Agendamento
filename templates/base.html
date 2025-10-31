@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Agendamento{% endblock %}</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+</head>
+
+<body class="min-h-screen flex flex-col justify-between bg-gradient-to-tr from-darkBlue-900 via-darkBlue-500 to-blue-900 text-white">
+
+    <!-- HEADER -->
+    <header class="flex flex-row justify-start items-center px-20 mt-6">
+        <h1 class="text-heading-h4">Logo</h1>
+    </header>
+
+    <!-- CONTEÚDO DAS PÁGINAS -->
+    <main class="flex flex-col justify-center items-start flex-grow px-20">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="flex justify-center items-center mb-6 text-sm text-white">
+        <p>vou pensar em algo pra colocar aqui</p>
+    </footer>
+
+</body>
+</html>

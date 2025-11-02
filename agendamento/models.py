@@ -17,7 +17,7 @@ class Usuario(AbstractUser):
     ]
     email = models.EmailField(unique=True, blank=False, null=False)
     tipo_usuario = models.CharField(max_length=10, choices=TIPO_CHOICES, default='Comum')
-    cargo = models.CharField(max_length=100, choices=CARGO_CHOICES, blank=False, null=False)   
+    cargo = models.CharField(max_length=100, choices=CARGO_CHOICES, blank=False, null=False)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

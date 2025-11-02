@@ -1,15 +1,16 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views import View
 from django.db.models import Q
 from .models import Agendamento, Usuario
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, update_session_auth_hash
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
 from .form_agendamento import AgendamentoForm
 from .form_registro import RegisterForm
+from .form_usuario import UsuarioForm, CustomPasswordChangeForm
 
 class CustomLoginView(View):
     template_name = 'registration/login.html'
@@ -100,7 +101,7 @@ def home(request):
     })
 
 
-login_required
+@login_required
 @require_POST
 @csrf_protect
 def criar_agendamento(request):
@@ -130,5 +131,78 @@ def criar_agendamento(request):
         })
     else:
         # converte ErrorDict -> dict de listas para JSON
+        print("Erros no formulário:", form.errors)
         errors = {field: [str(e) for e in errs] for field, errs in form.errors.items()}
         return JsonResponse({'success': False, 'errors': errors}, status=400)
+    
+def is_admin(user):
+    return user.is_superuser or user.tipo_usuario == 'Admin'
+
+
+@login_required
+def editar_perfil(request, user_id=None):
+    if user_id and is_admin(request.user):
+        usuario = get_object_or_404(Usuario, pk=user_id)
+        is_self = usuario == request.user
+    else:
+        usuario = request.user
+        is_self = True
+
+    if request.method == "POST":
+        if "salvar_dados" in request.POST:
+            form = UsuarioForm(request.POST, instance=usuario, user=request.user)
+            if form.is_valid():
+                if not is_admin(request.user):
+                    form.instance.tipo_usuario = usuario.tipo_usuario
+                form.save()
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'errors': form.errors})
+
+        elif "alterar_senha" in request.POST:
+            senha_form = CustomPasswordChangeForm(user=usuario, data=request.POST)
+            if senha_form.is_valid():
+                senha_form.save()
+                update_session_auth_hash(request, usuario)
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({'success': False, 'errors': senha_form.errors})
+
+    # GET
+    form = UsuarioForm(instance=usuario, user=request.user)
+    senha_form = CustomPasswordChangeForm(user=usuario)
+    return render(request, 'perfil.html', {
+        'form': form,
+        'senha_form': senha_form,
+        'titulo': f"Editar Perfil - {usuario.username}" if not is_self else "Meu Perfil",
+        'usuario_alvo': usuario,
+        'is_admin': is_admin(request.user),
+        'is_self': is_self,
+    })
+    
+@login_required
+def detalhes_agendamento(request, agendamento_id):
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+    pode_editar = agendamento.criado_por == request.user
+    form = AgendamentoForm(instance=agendamento) if pode_editar else None
+
+    if request.method == "POST" and pode_editar:
+        form = AgendamentoForm(request.POST, instance=agendamento)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({
+                "success": True,
+                "id": agendamento.id,
+                "message": "Agendamento atualizado com sucesso!",
+                "titulo": agendamento.titulo,
+                "data": agendamento.data.strftime("%d/%m/%Y"),
+                "horario": str(agendamento.horario)
+            })
+        return JsonResponse({"success": False, "errors": form.errors})
+
+    context = {"agendamento": agendamento, "pode_editar": pode_editar, "form": form}
+
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        return render(request, "modal_agendamento.html", context)
+
+    return render(request, "index.html", context)

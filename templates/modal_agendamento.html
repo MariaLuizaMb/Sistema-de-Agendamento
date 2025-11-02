@@ -1,0 +1,29 @@
+<div id="modalDetalhes" class="fixed inset-0 bg-black/50  items-center justify-center hidden z-50"></div>
+    <div id="conteudoModal" class="bg-white rounded-lg shadow-lg w-11/12 max-w-lg p-6 relative transition-transform duration-150 scale-95">
+        <button class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-2xl" onclick="fecharModal()">&times;</button>
+
+        <h2 class="text-xl font-semibold mb-2">Detalhes do Agendamento</h2>
+        <p><strong>Título:</strong> {{ agendamento.titulo }}</p>
+        <p><strong>Descrição:</strong> {{ agendamento.descricao }}</p>
+        <p><strong>Data:</strong> {{ agendamento.data }}</p>
+        <p><strong>Horário:</strong> {{ agendamento.horario }}</p>
+        <p><strong>Local:</strong> {{ agendamento.local }}</p>
+        <p><strong>Status:</strong> {{ agendamento.status }}</p>
+        <p><strong>Criado por:</strong> {{ agendamento.criado_por.get_full_name|default:agendamento.criado_por.username }}</p>
+
+        {% if pode_editar %}
+        <hr class="my-4">
+        <h3 class="text-lg font-medium mb-2">Editar Agendamento</h3>
+
+        <form id="formEditarAgendamento" method="post" action="{% url 'detalhes_agendamento' agendamento.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Salvar
+            </button>
+        </form>
+        {% endif %}
+
+        <div id="mensagemModal" class="mt-4 text-green-600 font-semibold hidden"></div>
+    </div>
+</div>

@@ -2,7 +2,8 @@
 {% load static %}
 {% load widget_tweaks %}
 
-{% block title %}Página Inicial | Sistema de Agendamento{% endblock %}
+
+{% block title %}Página Inicial{% endblock %}
 
 {% block content %}
 <div class="w-full ">
@@ -10,6 +11,9 @@
         <h2 class="-mb-1 text-heading-h3">Agendamentos</h2>
         <p class="-mt-1 text-heading-h5">Consulte aqui todos os agendamentos do sistema!</p>
     </div>
+
+    <div id="modalDetalhes" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm  items-center justify-center z-50">
+</div>
 
     <!-- painel fixo no fim da página com altura específica (ajuste h-96 conforme necessário) -->
     <div id="agendamentosPanel" class="fixed left-0 right-0 bottom-0 px-20 z-40">
@@ -61,7 +65,11 @@
                             {% for agendamento in agendamentos %}
                             <tr class="border-b border-darkBlue-900 hover:bg-blue-100">
                                 <td class="px-5 py-2">{{ agendamento.codigo_agendamento }}</td>
-                                <td class="px-5 py-2">{{ agendamento.nome }}</td>
+                                <td class="px-5 py-2 cursor-pointer text-darkBlue-900 hover:underline"
+                                    onclick="abrirDetalhesAgendamento('{{ agendamento.id }}')"
+                                    data-id="{{ agendamento.id }}">
+                                    {{ agendamento.nome }}
+                                </td>
                                 <td class="px-5 py-2">{{ agendamento.sala }}</td>
                                 <td class="px-5 py-2">{{ agendamento.criador }}</td>
                                 <td class="px-5 py-2">{{ agendamento.hora_inicio }}</td>
@@ -128,6 +136,17 @@
         </form>
     </div>
 </div>
+
+<div id="modalDetalhes" class="fixed inset-0 bg-black/50  items-center justify-center hidden z-50">
+    <div id="conteudoModal" class="bg-white rounded-lg shadow-lg w-11/12 max-w-lg p-6 relative transition-transform duration-150 scale-95">
+        <!-- conteúdo será substituído pelo fetch -->
+    </div>
+</div>
+<script>
+    const urlDetalhesAgendamentoBase = "{% url 'detalhes_agendamento' 0 %}".replace("/0/", "/");
+</script>
+
+<script src="{% static 'js/agendamentos.js' %}"></script>
 
 <!-- ✅ Toast de sucesso -->
 <div id="toast-sucesso" 

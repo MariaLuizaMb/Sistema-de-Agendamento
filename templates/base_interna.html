@@ -21,15 +21,24 @@
         <header class="flex justify-between items-center px-20 mt-6 ">
             
             <h1 class="text-heading-h4">Logo</h1>
-                <div class="flex flex-row items-center gap-6 overflow-hidden">
-                    <div class="bg-white rounded-full px-2 py-1">
-                        <button class=" px-6 py-2 text-darkBlue-900 rounded-full hover:bg-darkBlue-900 transition-colors duration-200 hover:text-white ">Agendamentos</button>
-                        <button class=" px-6 py-2 text-darkBlue-900 rounded-full hover:bg-darkBlue-900 transition-colors duration-200 hover:text-white ">Meus Agendamentos</button>
+                <div class="flex flex-row items-center gap-5 overflow-hidden">
+                    <div class="bg-white rounded-full px-6 py-3">
+                        <a href="{% url 'home' %}" class="px-6 py-2 rounded-full transition-colors duration-200
+                            {% if request.resolver_match.url_name == 'home' %}
+                                bg-darkBlue-900 text-white 
+                            {% else %}
+                                text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                            {% endif %}">Agendamentos</a>
+                        <a class=" px-6 py-2 text-darkBlue-900 rounded-full hover:bg-darkBlue-900 transition-colors duration-200 hover:text-white ">Meus Agendamentos</a>
                     </div>
-                    <div class="flex items-center bg-white px-2 py-1 rounded-full">
-                        <button class="px-6 py-2 text-darkBlue-900 rounded-full hover:text-white hover:bg-darkBlue-900 transition-colors duration-200">
-                        Usuário
-                        </button>
+                    <div class="flex items-center bg-white px-3 py-1 rounded-full">
+                        <a href="{% url 'editar_perfil' %}" 
+                            class="px-6 py-2 rounded-full transition-colors duration-200
+                            {% if request.resolver_match.url_name == 'editar_perfil' %}
+                                bg-darkBlue-900 text-white 
+                            {% else %}
+                                text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                            {% endif %}">Usuário</a>
                     </div>
                 </div>
         </header>

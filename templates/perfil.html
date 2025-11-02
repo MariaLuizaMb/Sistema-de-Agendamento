@@ -1,0 +1,124 @@
+{% extends 'base_interna.html' %}
+{% load static %}
+
+
+{% block title %}Perfil{% endblock %}
+
+{% block content %}
+<div>
+    <div class="content-center-space" style="min-height: calc(100vh - 28rem - 96px); display:flex; align-items:start; justify-content:center; flex-direction:column; padding:1rem 0;">
+        <h2 class="-mt-1 text-heading-h3">Olá!</h2>
+        <p class="-mt-2 text-heading-h3">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+    </div>
+
+   {% if messages %}
+        <div class="w-full max-w-2xl mb-6">
+            {% for message in messages %}
+                <div class="p-3 mb-2 rounded {{ message.tags }} bg-green-100 text-green-800">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+     <div id="mensagens" class="w-full max-w-2xl mb-6"></div>
+    
+    <div class="w-full flex flex-row gap-10">
+        <!-- Formulário de edição de usuário -->
+        <div class=" w-full max-w-2xl  rounded-lg">
+            <p class="">Alterar dados</p>
+            <form method="POST" class="space-y-4" name="salvar_dados" id="form-dados">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Primeiro Nome -->
+                    <div>
+                        {{ form.first_name.label_tag }}
+                        {{ form.first_name }}
+                        {{ form.first_name.errors }}
+                    </div>
+
+                    <!-- Último Nome -->
+                    <div>
+                        {{ form.last_name.label_tag }}
+                        {{ form.last_name }}
+                        {{ form.last_name.errors }}
+                    </div>
+                </div>
+
+                <!-- Username -->
+                <div>
+                    {{ form.username.label_tag }}
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+
+                <!-- Email -->
+                <div>
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                    {{ form.email.errors }}
+                </div>
+
+                <!-- Cargo e Tipo de usuário (apenas para admin) -->
+                <div class="grid grid-cols-2 gap-4">
+                    {% if form.cargo %}
+                        <div>
+                            {{ form.cargo.label_tag }}
+                            {{ form.cargo }}
+                            {{ form.cargo.errors }}
+                        </div>
+                    {% endif %}
+                    {% if form.tipo_usuario %}
+                        <div>
+                            {{ form.tipo_usuario.label_tag }}
+                            {{ form.tipo_usuario }}
+                            {{ form.tipo_usuario.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="button" id="btn-salvar-dados"
+                        class="px-6 py-2 bg-darkBlue-900 text-white rounded-full hover:bg-darkBlue-700 transition-colors duration-200">
+                    Salvar Dados
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulário de alteração de senha -->
+        <div class="w-full max-w-2xl p-6 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Alterar Senha</h3>
+            <form method="POST" class="space-y-4" name="alterar_senha" id="form-senha">
+                {% csrf_token %}
+                {{ senha_form.non_field_errors }}
+
+                <div>
+                    {{ senha_form.old_password.label_tag }}
+                    {{ senha_form.old_password }}
+                    {{ senha_form.old_password.errors }}
+                </div>
+
+                <div>
+                    {{ senha_form.new_password1.label_tag }}
+                    {{ senha_form.new_password1 }}
+                    {{ senha_form.new_password1.errors }}
+                </div>
+
+                <div>
+                    {{ senha_form.new_password2.label_tag }}
+                    {{ senha_form.new_password2 }}
+                    {{ senha_form.new_password2.errors }}
+                </div>
+
+                <button type="button" name="btn-alterar-senha" id="btn-alterar-senha"
+                        class="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-500 transition-colors duration-200">
+                    Alterar Senha
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/perfil.js' %}"></script>
+{% endblock %}

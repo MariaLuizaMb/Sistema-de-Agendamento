@@ -26,4 +26,7 @@ urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('home/', home, name='home'),
     path('criar_agendamento/', views.criar_agendamento, name='criar_agendamento'),
+    path('editar_perfil/', views.editar_perfil, name='editar_perfil'),
+    path('editar-perfil/<int:user_id>/', views.editar_perfil, name='editar_usuario_admin'),
+    path('agendamento/<int:id>/', views.detalhes_agendamento, name='detalhes_agendamento'),
 ]

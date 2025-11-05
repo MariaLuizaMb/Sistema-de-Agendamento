@@ -19,14 +19,18 @@ from django.urls import path, include
 from agendamento import views
 from agendamento.views import CustomLoginView, home
 
+
 urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('', CustomLoginView.as_view(), name='login'),  # login na raiz
     path('register/', views.register_view, name='register'),
     path('home/', home, name='home'),
+    path('logout/', views.logout_view, name='logout'),
+    path('agendamentos/', views.usuario_agendamentos, name='agendamentos'),
     path('criar_agendamento/', views.criar_agendamento, name='criar_agendamento'),
     path('editar_perfil/', views.editar_perfil, name='editar_perfil'),
     path('editar-perfil/<int:user_id>/', views.editar_perfil, name='editar_usuario_admin'),
     path('agendamento/<int:id>/', views.detalhes_agendamento, name='detalhes_agendamento'),
+    #path('homeAdmin/', views.homeAdm, name='homeAdm'),
 ]

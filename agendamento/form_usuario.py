@@ -48,8 +48,8 @@ class UsuarioForm(forms.ModelForm):
         # Desabilita campos para usuários não-admin
         if user and user.tipo_usuario != 'Admin':
             self.fields.pop('tipo_usuario')
-            self.fields['cargo'].widget.attrs['readonly'] = True
-            self.instance.cargo = self.instance.cargo
+            self.fields['cargo'].disabled = True  # Django nativo para desativar edição
+            
 
 
 

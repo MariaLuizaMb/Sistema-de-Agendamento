@@ -62,19 +62,12 @@
                 </div>
 
                 <!-- Cargo e Tipo de usuário (apenas para admin) -->
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid gap-4">
                     {% if form.cargo %}
                         <div>
                             {{ form.cargo.label_tag }}
                             {{ form.cargo }}
                             {{ form.cargo.errors }}
-                        </div>
-                    {% endif %}
-                    {% if form.tipo_usuario %}
-                        <div>
-                            {{ form.tipo_usuario.label_tag }}
-                            {{ form.tipo_usuario }}
-                            {{ form.tipo_usuario.errors }}
                         </div>
                     {% endif %}
                 </div>

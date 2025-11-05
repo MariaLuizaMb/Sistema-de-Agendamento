@@ -4,7 +4,7 @@ from django.views import View
 from django.db.models import Q
 from .models import Agendamento, Usuario
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth import login, authenticate, update_session_auth_hash, logout
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_POST
@@ -60,6 +60,11 @@ def register_view(request):
         form = RegisterForm()
     return render(request, 'registration/register.html', {'form': form})
 
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Você saiu da sua conta.")
+    return redirect('login')
+
 @login_required
 def home(request):
     form = AgendamentoForm()
@@ -93,13 +98,65 @@ def home(request):
 
     agendamentos = agendamentos.order_by(campo_ordenacao)
 
-    return render(request, 'index.html', {
+    if is_admin(request.user):
+        template_name = 'admin/index_adm.html'
+    else:
+        template_name = 'index.html'
+
+
+    return render(request, template_name, {
         'agendamentos': agendamentos,
         'form': form,
         'ordenar_por': ordenar_por,
         'busca': termo_busca,
     })
 
+@login_required
+def usuario_agendamentos(request):
+    form = AgendamentoForm()
+    """Página principal com listagem, filtro e pesquisa de agendamentos."""
+
+    ordenar_por = request.GET.get('ordenar_por', '')
+    termo_busca = request.GET.get('busca', '').strip()
+
+    opcoes_validas = {
+        'data': 'data',
+        'hora_inicio': 'hora_inicio',
+        'hora_fim': 'hora_fim',
+        'sala': 'sala__nome',
+        'criador': 'criador__username',
+        'nome': 'nome',
+        'codigo_agendamento': 'codigo_agendamento',
+    }
+
+    campo_ordenacao = opcoes_validas.get(ordenar_por, 'data')  # padrão: data
+
+    agendamentos = Agendamento.objects.filter(criador=request.user)
+
+    if termo_busca:
+        agendamentos = agendamentos.filter(
+            Q(nome__icontains=termo_busca) |
+            Q(criador__username__icontains=termo_busca) |
+            Q(sala__nome__icontains=termo_busca) |
+            Q(status__icontains=termo_busca) |
+            Q(data__icontains=termo_busca)
+        )
+
+    agendamentos = agendamentos.order_by(campo_ordenacao)
+
+    if is_admin(request.user):
+        template_name = 'admin/agendamentos_admin.html'
+    else:
+        template_name = 'agendamentos_usuario.html'
+
+
+    return render(request, template_name, {
+        'agendamentos': agendamentos,
+        'form': form,
+        'ordenar_por': ordenar_por,
+        'busca': termo_busca,
+    })
+    
 
 @login_required
 @require_POST
@@ -171,7 +228,12 @@ def editar_perfil(request, user_id=None):
     # GET
     form = UsuarioForm(instance=usuario, user=request.user)
     senha_form = CustomPasswordChangeForm(user=usuario)
-    return render(request, 'perfil.html', {
+    if is_admin(request.user):
+        template_name = 'admin/perfil_admin.html'
+    else:
+        template_name = 'perfil.html'
+
+    return render(request, template_name, {
         'form': form,
         'senha_form': senha_form,
         'titulo': f"Editar Perfil - {usuario.username}" if not is_self else "Meu Perfil",

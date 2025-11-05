@@ -110,6 +110,35 @@ def home(request):
         'ordenar_por': ordenar_por,
         'busca': termo_busca,
     })
+    
+@login_required
+def listar_usuarios(request):
+    busca = request.GET.get('busca', '')
+    ordenar_por = request.GET.get('ordenar_por', '')  # padrão: ordenar por ID
+
+    usuarios = Usuario.objects.all()
+
+    # Filtro de busca
+    if busca:
+        usuarios = usuarios.filter(username__icontains=busca)
+
+    opcoes_validas = {
+        'id': 'id',
+        'nome': 'username',
+        'tipo': 'tipo_usuario',
+        'cargo': 'cargo',
+    }
+
+    campo_ordenacao = opcoes_validas.get(ordenar_por, 'id')  # padrão: ID
+    usuarios = usuarios.order_by(campo_ordenacao)
+
+    context = {
+        'usuarios': usuarios,
+        'busca': busca,
+        'ordenar_por': ordenar_por,
+    }
+
+    return render(request, 'admin/usuarios_admin.html', context)
 
 @login_required
 def usuario_agendamentos(request):

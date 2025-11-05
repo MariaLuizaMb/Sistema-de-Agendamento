@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Agendamento{% endblock %}</title>
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+</head>
+
+<body class="min-h-screen min-w-screen flex flex-col">
+    
+    <div class="fixed inset-0 -z-10">
+        <img 
+            src="{% static 'images/fundoTelas.png' %}" 
+            alt="Background Image" 
+            class="w-full h-full object-cover"
+        > 
+    </div>
+    <div id="pageContent" class="relative w-full">
+        <header class="flex justify-between items-center px-20 mt-6 ">
+            
+            <h1 class="text-heading-h4">Logo</h1>
+                <div class="flex flex-row items-center gap-5 overflow-hidden">
+                    <div class="bg-white rounded-full px-6 py-3">
+                        <a href="{% url 'home' %}" class="px-6 py-2 rounded-full transition-colors duration-200 text-darkBlue-900 {% if request.resolver_match.url_name == 'home' %}
+                                bg-darkBlue-900 text-white 
+                            {% else %}
+                                text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                            {% endif %}">Agendamentos</a>
+                        <a href="{% url 'agendamentos' %}" class=" px-6 py-2 text-darkBlue-900 rounded-full transition-colors duration-200 {% if request.resolver_match.url_name == 'agendamentos' %}
+                                bg-darkBlue-900 text-white 
+                            {% else %}
+                                text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                            {% endif %}">Meus Agendamentos</a>
+                        <a class=" px-6 py-2 text-darkBlue-900 rounded-full hover:bg-darkBlue-900 transition-colors duration-200 hover:text-white ">Usuários</a>
+                    </div>
+                    <div class="flex items-center bg-white px-3 py-1 rounded-full">
+                        <a href="{% url 'editar_perfil' %}" class="px-6 py-2 rounded-full transition-colors duration-200
+                                text-darkBlue-900 {% if request.resolver_match.url_name == 'editar_perfil' %}
+                                bg-darkBlue-900 text-white 
+                            {% else %}
+                                text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                            {% endif %}">Perfil</a>
+                    </div>
+                    <div class="flex items-center bg-white px-3 py-1 rounded-full">
+                        <a href="{% url 'logout' %}" 
+                        class="flex items-center gap-2 px-4 py-2 rounded-full text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white transition">
+                            <span class="w-5 h-5 bg-current mask-logout"></span>
+                            <span class="hidden sm:inline">Sair</span>
+                        </a>
+                    </div>
+                </div>
+        </header>
+
+        <main class="relative min-w-screen flex flex-row justify-between items-center px-20">
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+</body>
+</html>
+

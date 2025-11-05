@@ -1,4 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root{
     --font-sans: "Roboto Condensed", sans-serif;
@@ -41,7 +44,10 @@
     --color-darkBlue-800: #0e161e;
     --color-darkBlue-900: #0b1117;
 }
+@layer utilities {
+  .mask-logout {
+    -webkit-mask: url('/static/images/logout.svg') no-repeat center / contain;
+    mask: url('/static/images/logout.svg') no-repeat center / contain;
+  }
+}
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;

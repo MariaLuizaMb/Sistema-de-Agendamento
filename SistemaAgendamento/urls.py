@@ -28,6 +28,7 @@ urlpatterns = [
     path('home/', home, name='home'),
     path('logout/', views.logout_view, name='logout'),
     path('agendamentos/', views.usuario_agendamentos, name='agendamentos'),
+    path('usuarios/', views.listar_usuarios, name='usuarios'),
     path('criar_agendamento/', views.criar_agendamento, name='criar_agendamento'),
     path('editar_perfil/', views.editar_perfil, name='editar_perfil'),
     path('editar-perfil/<int:user_id>/', views.editar_perfil, name='editar_usuario_admin'),

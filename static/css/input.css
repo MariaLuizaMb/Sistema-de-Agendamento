@@ -51,10 +51,29 @@
     mask: url('/static/images/logout.svg') no-repeat center / contain;
   }
   .mask-edit {
-  mask: url('static/images/edit.svg') no-repeat center;
-  mask-size: contain;
-  -webkit-mask: url('static/images/edit.svg') no-repeat center;
-  -webkit-mask-size: contain;
-}
+    -webkit-mask: url('/static/images/edit.svg') no-repeat center / contain;
+    mask: url('/static/images/edit.svg') no-repeat center / contain;
+  }
+  .mask-delete {
+    -webkit-mask: url('/static/images/delete.svg')  no-repeat center / contain;
+    mask: url('/static/images/delete.svg')  no-repeat center / contain;
+  }
+  .mask-add {
+    -webkit-mask: url('/static/images/add.svg')no-repeat center / contain;
+    mask: url('/static/images/add.svg')  no-repeat center / contain;
+  }
+  .mask-user {
+    -webkit-mask: url('/static/images/usuario.svg')no-repeat center / contain;
+    mask: url('/static/images/usuario.svg')  no-repeat center / contain;
+  }
+  .mask-busca {
+    -webkit-mask: url('/static/images/busca.svg')no-repeat center / contain;
+    mask: url('/static/images/busca.svg')  no-repeat center / contain;
+  }
+  .mask-filtro {
+    -webkit-mask: url('/static/images/filtro.svg')no-repeat center / contain;
+    mask: url('/static/images/filtro.svg')  no-repeat center / contain;
+  }
+
 }
 

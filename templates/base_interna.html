@@ -38,12 +38,21 @@
                     </div>
                     <div class="flex items-center bg-white px-3 py-1 rounded-full">
                         <a href="{% url 'editar_perfil' %}" 
-                            class="px-6 py-2 rounded-full transition-colors duration-200
-                            {% if request.resolver_match.url_name == 'editar_perfil' %}
-                                bg-darkBlue-900 text-white 
-                            {% else %}
-                                text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
-                            {% endif %}">Usuário</a>
+                            class="flex items-center gap-2 px-6 py-2 rounded-full transition-colors duration-200
+                                {% if request.resolver_match.url_name == 'editar_perfil' %}
+                                    bg-darkBlue-900 text-white 
+                                {% else %}
+                                    text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                                {% endif %}">
+                            <span class="w-4 h-4 bg-current mask-user"></span>
+                                    Usuário</a>
+                    </div>
+                    <div class="flex items-center bg-white px-3 py-1 rounded-full">
+                        <a href="{% url 'logout' %}" 
+                        class="flex items-center gap-2 px-4 py-2 rounded-full text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white transition">
+                            <span class="w-5 h-5 bg-current mask-logout"></span>
+                            <span class="hidden sm:inline">Sair</span>
+                        </a>
                     </div>
                 </div>
         </header>

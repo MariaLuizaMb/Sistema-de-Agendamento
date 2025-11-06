@@ -10,34 +10,34 @@ class UsuarioForm(forms.ModelForm):
         
         widgets = {
             'first_name': forms.TextInput(attrs={
-                "class": "bg-white w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50",
+                "class": "bg-white w-full h-12 px-4 rounded-md placeholder:text-darkBlue-50",
                 "placeholder": "Primeiro Nome",
                 "autocomplete": "given-name",
                 "required": True
             }),
             'last_name': forms.TextInput(attrs={
-                "class": "bg-white w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50",
+                "class": "bg-white w-full h-12 px-4 rounded-md placeholder:text-darkBlue-50",
                 "placeholder": "Último Nome",
                 "autocomplete": "family-name",
                 "required": True
             }),
             'username': forms.TextInput(attrs={
-                "class": "bg-white w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50",
+                "class": "bg-white w-full h-12 px-4 rounded-md placeholder:text-darkBlue-50",
                 "placeholder": "Nome de Usuário",
                 "autocomplete": "username",
                 "required": True
             }),
             'email': forms.EmailInput(attrs={
-                "class": "bg-white w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50",
+                "class": "bg-white w-full h-12 px-4 rounded-md placeholder:text-darkBlue-50",
                 "placeholder": "seu@email.com",
                 "autocomplete": "email",
                 "required": True
             }),
             'cargo': forms.Select(attrs={
-                "class": "bg-white w-11/12 h-12 px-4 rounded-md text-darkBlue-50"
+                "class": "bg-white w-full h-12 px-4 rounded-md text-darkBlue-50"
             }),
             'tipo_usuario': forms.Select(attrs={
-                "class": "bg-white w-11/12 h-12 px-4 rounded-md text-darkBlue-50"
+                "class": "bg-white w-full h-12 px-4 rounded-md text-darkBlue-50"
             }),
         }
         

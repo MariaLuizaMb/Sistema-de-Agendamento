@@ -21,10 +21,15 @@
             <!-- barra de pesquisa / filtro / botão: não rola -->
             <div class="px-4 py-3 flex items-center gap-4 flex-none">
                 <form class="flex w-full items-center justify-between" method="get" >
-                    <input type="text" name="busca" value="{{ busca }}" placeholder="Pesquisar Agendamentos"
-                           class="bg-white rounded-md px-3 py-1 w-3/4">
-                    <div class="flex items-center ml-4 ">
-                        <select id="ordenar_por" name="ordenar_por" onchange="this.form.submit()" class="appearance-none bg-white rounded-md px-2 py-1">
+                    <div class="relative w-3/4">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 bg-current opacity-30 mask-busca text-darkBlue-900"></span>
+                        <input type="text" name="busca" value="{{ busca }}" placeholder="Pesquisar Agendamentos"
+                            class="bg-white rounded-md pl-9 pr-3 py-1 w-full text-darkBlue-900 focus:outline-none">
+                    </div>
+                    <div class="flex items-center ml-4 relative">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 bg-current mask-filtro text-darkBlue-900"></span>
+
+                        <select id="ordenar_por" name="ordenar_por" onchange="this.form.submit()" class="appearance-none bg-white rounded-md pl-9 pr-2 py-1">
                             <option disabled selected hidden>Filtrar</option>
                             <option value="nome" {% if ordenar_por == 'nome' %}selected{% endif %}>Nome</option>
                             <option value="data" {% if ordenar_por == 'data' %}selected{% endif %}>Data</option>
@@ -36,11 +41,12 @@
                             <a id="limparFiltro"
                                class="ml-2 px-3 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors duration-200"
                                href="?{% if busca %}busca={{ busca|urlencode }}{% endif %}">
-                                Limpar filtro
+                                Limpar
                             </a>
                         {% endif %}
                         <button type="button" id="abrirModal"
-                                class="ml-3 px-3 py-1 bg-darkBlue-900 text-white rounded-md hover:bg-blue-800 transition-colors duration-200">
+                            class="flex items-center gap-2 ml-3 px-3 py-1 bg-blue-900 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
+                            <span class="w-4 h-4 bg-current mask-add"></span>
                             Nova Reunião
                         </button>
                     </div>

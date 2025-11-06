@@ -64,6 +64,15 @@ if (abrir && modal) {
             if (submitBtn) submitBtn.disabled = true;
 
             const formData = new FormData(form);
+        
+
+            // ----- ADICIONE ESTAS LINHAS PARA DEPURAR -----
+            console.log("--- Depurando FormData ---");
+            console.log("Dados do formulário prestes a enviar:");
+            for (let [key, value] of formData.entries()) {
+                console.log(key, ":", value);
+            }
+            console.log("----------------------------");
             // limpa mensagens anteriores
             modal.querySelectorAll('.field-error').forEach(el => el.textContent = '');
             const globalErr = document.getElementById('form-error-global');

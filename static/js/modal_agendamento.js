@@ -64,6 +64,15 @@ if (abrir && modal) {
             if (submitBtn) submitBtn.disabled = true;
 
             const formData = new FormData(form);
+        
+
+            // ----- ADICIONE ESTAS LINHAS PARA DEPURAR -----
+            console.log("--- Depurando FormData ---");
+            console.log("Dados do formulário prestes a enviar:");
+            for (let [key, value] of formData.entries()) {
+                console.log(key, ":", value);
+            }
+            console.log("----------------------------");
             // limpa mensagens anteriores
             modal.querySelectorAll('.field-error').forEach(el => el.textContent = '');
             const globalErr = document.getElementById('form-error-global');
@@ -150,6 +159,143 @@ if (abrir && modal) {
                 mostrarErro("Erro inesperado. Tente novamente.");
             } finally {
                 if (submitBtn) submitBtn.disabled = false;
+            }
+        });
+    }
+});
+
+let agendamentoIdParaExcluir = null;
+
+function abrirModalExcluir(id) {
+    agendamentoIdParaExcluir = id;
+    const modal = document.getElementById('modalExcluir');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function fecharModalExcluir() {
+    agendamentoIdParaExcluir = null;
+    const modal = document.getElementById('modalExcluir');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+async function confirmarExclusao() {
+    if (!agendamentoIdParaExcluir) return;
+
+    try {
+        const response = await fetch(`/agendamentos/excluir/${agendamentoIdParaExcluir}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            window.location.reload();
+        } else {
+            alert(data.error || 'Erro ao excluir o agendamento.');
+        }
+    } catch (error) {
+        console.error('Erro na exclusão:', error);
+        alert('Erro de conexão com o servidor.');
+    } finally {
+        fecharModalExcluir();
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Função para abrir o modal e carregar os dados
+async function abrirModalEditar(id) {
+    const modal = document.getElementById('modalEditar');
+    
+    try {
+        // 1. Busca os dados atuais do servidor
+        const response = await fetch(`/agendamentos/editar-modal/${id}/`);
+        const data = await response.json();
+
+        if (data.success) {
+            // 2. Preenche os campos do formulário
+            document.getElementById('editId').value = data.id;
+            document.getElementById('editNome').value = data.nome;
+            document.getElementById('editData').value = data.data;
+            document.getElementById('editHora').value = data.hora_inicio;
+
+            // 3. Mostra o modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            alert(data.error || 'Erro ao carregar dados.');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro de conexão ao tentar carregar o agendamento.');
+    }
+}
+
+// Função para fechar o modal
+function fecharModalEditar() {
+    const modal = document.getElementById('modalEditar');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Listener para o SUBMIT do formulário de edição
+document.addEventListener("DOMContentLoaded", () => {
+    const formEditar = document.getElementById('formEditar');
+    if (formEditar) {
+        formEditar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editId').value;
+            const formData = {
+                nome: document.getElementById('editNome').value,
+                data: document.getElementById('editData').value,
+                hora_inicio: document.getElementById('editHora').value
+            };
+
+            try {
+                const response = await fetch(`/agendamentos/editar-modal/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    // Sucesso: recarrega a página para mostrar os dados novos
+                    window.location.reload();
+                } else {
+                    alert('Erro ao salvar: ' + (result.error || 'Desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                alert('Erro de conexão.');
             }
         });
     }

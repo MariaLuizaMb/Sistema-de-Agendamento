@@ -13,6 +13,7 @@ from .form_registro import RegisterForm
 from .form_usuario import UsuarioForm, CustomPasswordChangeForm
 from .criar_usuario import CriarUsuario
 from .criar_sala import SalaForm
+from django.views.decorators.http import require_http_methods
 
 class CustomLoginView(View):
     template_name = 'registration/login.html'
@@ -385,3 +386,70 @@ def detalhes_agendamento(request, agendamento_id):
         return render(request, "modal_agendamento.html", context)
 
     return render(request, "index.html", context)
+
+@login_required
+@require_http_methods(["DELETE", "POST"]) 
+def excluir_agendamento(request, agendamento_id):
+    if not is_admin(request.user):
+        return JsonResponse({
+            'success': False,
+            'error': 'Você não tem permissão para realizar esta ação.'
+        }, status=403)
+
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+
+    try:
+        agendamento.delete()
+        return JsonResponse({'success': True, 'message': 'Agendamento excluído com sucesso!'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+# Em views.py
+from datetime import datetime
+
+@login_required
+def editar_agendamento_modal(request, pk):
+    agendamento = get_object_or_404(Agendamento, pk=pk)
+
+    # Verificação de segurança: apenas admin ou o criador podem editar
+    if not is_admin(request.user) and agendamento.criador != request.user:
+         return JsonResponse({'success': False, 'error': 'Permissão negada.'}, status=403)
+
+    if request.method == 'GET':
+        # Retorna os dados atuais para preencher o modal
+        return JsonResponse({
+            'success': True,
+            'id': agendamento.id,
+            'nome': agendamento.nome,
+            # Formata a data para YYYY-MM-DD para o input type="date"
+            'data': agendamento.data.strftime('%Y-%m-%d'),
+            # Formata a hora para HH:MM para o input type="time"
+            'hora_inicio': agendamento.hora_inicio.strftime('%H:%M')
+        })
+
+    elif request.method == 'POST':
+        # Processa a atualização
+        try:
+            # Obtém os dados do corpo da requisição (assumindo JSON ou FormData)
+            import json
+            data = json.loads(request.body) if request.content_type == 'application/json' else request.POST
+
+            agendamento.nome = data.get('nome', agendamento.nome)
+            
+            data_str = data.get('data')
+            if data_str:
+                agendamento.data = datetime.strptime(data_str, '%Y-%m-%d').date()
+                
+            hora_str = data.get('hora_inicio')
+            if hora_str:
+                agendamento.hora_inicio = datetime.strptime(hora_str, '%H:%M').time()
+
+            # Aqui você poderia readicionar validações (ex: checar conflito de horário novamente)
+            agendamento.save()
+            
+            return JsonResponse({'success': True, 'message': 'Agendamento atualizado!'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+    return JsonResponse({'success': False, 'error': 'Método inválido.'}, status=405)

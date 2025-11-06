@@ -36,4 +36,6 @@ urlpatterns = [
     path('editar_perfil/', views.editar_perfil, name='editar_perfil'),
     path('editar-perfil/<int:user_id>/', views.editar_perfil, name='editar_usuario_admin'),
     path('agendamento/<int:id>/', views.detalhes_agendamento, name='detalhes_agendamento'),
+    path('agendamentos/excluir/<int:agendamento_id>/', views.excluir_agendamento, name='excluir_agendamento'),
+    path('agendamentos/editar-modal/<int:pk>/', views.editar_agendamento_modal, name='editar_agendamento_modal'),
 ]

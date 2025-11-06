@@ -179,6 +179,7 @@ venv\Scripts\activate     # Windows
 ### 2️⃣ Instalar dependências
 ```bash
 pip install django psycopg2-binary
+pip install django-widget-tweaks
 ```
 
 ### 3️⃣ Criar e aplicar migrações

@@ -28,16 +28,16 @@ class Usuario(AbstractUser):
 
 class Sala(models.Model):
     TIPO_CHOICES = [
-        ('reuniao', 'Sala de Reunião'),
-        ('trabalho', 'Sala de Trabalho'),
-        ('videochamada', 'Sala de Videochamada'),
-        ('brainstorming', 'Sala de Brainstorming'),
-        ('generica', 'Sala Genérica'),
+        ('Sala de Reunião', 'Sala de Reunião'),
+        ('Sala de Trabalho', 'Sala de Trabalho'),
+        ('Sala de Videochamada', 'Sala de Videochamada'),
+        ('Sala de Brainstorming', 'Sala de Brainstorming'),
+        ('Sala Genérica', 'Sala Genérica'),
     ]
 
     nome = models.CharField(max_length=100, unique=True)
     capacidade = models.PositiveIntegerField()
-    tipo_sala = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    tipo_sala = models.CharField(max_length=30, choices=TIPO_CHOICES)
     criador = models.ForeignKey(
         Usuario,
         on_delete=models.SET_NULL,  # se admin for apagado, a sala continua

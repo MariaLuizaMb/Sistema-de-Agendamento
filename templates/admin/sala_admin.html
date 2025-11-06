@@ -71,8 +71,8 @@
                                 <td class="px-5 py-2">{{ sala.capacidade }}</td>
                                 <td class="px-5 py-2 flex gap-3 justify-start">
                                 <button onclick="abrirModalEditar('{{ agendamento.id }}')" 
-                                        class=" hover:underline duration-200">
-                                    ✏️ 
+                                    class="flex items-center gap-2 px-4 py-2 rounded-full text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white transition">
+                                    <span class="w-5 h-5 bg-current mask-edit"></span>
                                 </button>
                                 <button onclick="abrirModalExcluir('{{ agendamento.id }}')"
                                         class=" hover:underline  duration-200">

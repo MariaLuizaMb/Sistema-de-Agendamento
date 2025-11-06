@@ -84,15 +84,17 @@
                                 <td class="px-5 py-2">{{ agendamento.hora_inicio }}</td>
                                 <td class="pl-5 py-2">{{ agendamento.data|date:"d/m/Y" }}</td>
                                 <td class="px-5 py-2 flex gap-2 justify-center">
-                                <button onclick="abrirModalEditar('{{ agendamento.id }}')" 
-                                    class="flex items-center py-2 rounded-full text-darkBlue-900 transition"></button>
-                                    <span class="w-4 h-4 bg-current mask-edit"></span>
-                                </button>
-                                <button onclick="abrirModalExcluir('{{ agendamento.id }}')"
-                                    class="flex items-center py-2 rounded-full text-darkBlue-900  transition"></button>
-                                    <span class="w-4 h-4 bg-current mask-delete"></span>
-                                </button>
-                            </td>
+                                <td class="px-5 py-2 flex gap-2 justify-center">
+                                    <button onclick="abrirModalEditar('{{ agendamento.id }}')"
+                                        class="flex items-center p-2 rounded-full text-darkBlue-900 hover:bg-blue-100 transition">
+                                        <span class="w-4 h-4 bg-current mask-edit"></span>
+                                    </button>
+
+                                    <button onclick="abrirModalExcluir('{{ agendamento.id }}')"
+                                        class="flex items-center p-2 rounded-full text-red-900 hover:bg-red-100 transition">
+                                        <span class="w-4 h-4 bg-current mask-delete"></span>
+                                    </button>
+                                </td>
                             </tr>
                             {% empty %}
                             <tr>

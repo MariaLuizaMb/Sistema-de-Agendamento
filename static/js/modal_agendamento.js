@@ -226,3 +226,77 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+// Função para abrir o modal e carregar os dados
+async function abrirModalEditar(id) {
+    const modal = document.getElementById('modalEditar');
+    
+    try {
+        // 1. Busca os dados atuais do servidor
+        const response = await fetch(`/agendamentos/editar-modal/${id}/`);
+        const data = await response.json();
+
+        if (data.success) {
+            // 2. Preenche os campos do formulário
+            document.getElementById('editId').value = data.id;
+            document.getElementById('editNome').value = data.nome;
+            document.getElementById('editData').value = data.data;
+            document.getElementById('editHora').value = data.hora_inicio;
+
+            // 3. Mostra o modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            alert(data.error || 'Erro ao carregar dados.');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro de conexão ao tentar carregar o agendamento.');
+    }
+}
+
+// Função para fechar o modal
+function fecharModalEditar() {
+    const modal = document.getElementById('modalEditar');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Listener para o SUBMIT do formulário de edição
+document.addEventListener("DOMContentLoaded", () => {
+    const formEditar = document.getElementById('formEditar');
+    if (formEditar) {
+        formEditar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('editId').value;
+            const formData = {
+                nome: document.getElementById('editNome').value,
+                data: document.getElementById('editData').value,
+                hora_inicio: document.getElementById('editHora').value
+            };
+
+            try {
+                const response = await fetch(`/agendamentos/editar-modal/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    // Sucesso: recarrega a página para mostrar os dados novos
+                    window.location.reload();
+                } else {
+                    alert('Erro ao salvar: ' + (result.error || 'Desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                alert('Erro de conexão.');
+            }
+        });
+    }
+});

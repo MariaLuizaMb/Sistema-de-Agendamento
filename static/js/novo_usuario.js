@@ -1,24 +1,23 @@
-console.log('JS carregado');
+console.log('JS Usuários carregado');
 
 document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('modalAgendamento');
-    const abrir = document.getElementById('abrirModal');
-    const fechar = document.getElementById('fecharModal');
-    const cancelar = document.getElementById('cancelarBtn');
-    const form = document.getElementById('formAgendamento');
+    const modal = document.getElementById('modalUsuario');
+    const abrir = document.getElementById('abrirModal_usuario');
+    const fechar = document.getElementById('fecharModalUsuario');
+    const cancelar = document.getElementById('cancelarBtnUsuario');
+    const form = document.getElementById('formUsuario');
     const tbody = document.querySelector('tbody');
     const toastSucesso = document.getElementById('toast-sucesso');
     const toastErro = document.getElementById('toast-erro');
-    const submitBtn = document.getElementById('submitBtn');
+    const submitBtn = document.getElementById('submitBtnUsuario');
     const pageContent = document.getElementById('pageContent');
 
-    // Utilitários de UI
+    // --- UTILITÁRIOS DE UI ---
     function show(element) {
         element.classList.remove('hidden', 'opacity-0');
         element.classList.add('flex', 'opacity-100');
         document.body.classList.add('overflow-hidden');
         if (pageContent) pageContent.classList.add('modal-blurred-fallback');
-        document.body.classList.add('overflow-hidden');
     }
     function hide(element) {
         element.classList.remove('opacity-100');
@@ -34,16 +33,17 @@ document.addEventListener('DOMContentLoaded', function () {
         show(elemento);
         setTimeout(() => hide(elemento), 3000);
     }
-    function mostrarSucesso(msg) { mostrarToast(toastSucesso, msg || 'Agendamento criado com sucesso! ✅'); }
-    function mostrarErro(msg) { mostrarToast(toastErro, msg || 'Erro ao salvar o agendamento. ❌'); }
+    function mostrarSucesso(msg) { mostrarToast(toastSucesso, msg || 'Usuário salvo com sucesso! ✅'); }
+    function mostrarErro(msg) { mostrarToast(toastErro, msg || 'Erro ao salvar o usuário. ❌'); }
 
-
-    // Abre/fecha modal (checagens para evitar erros se elementos não existem)
-if (abrir && modal) {
+    // --- ABRIR / FECHAR MODAL ---
+    if (abrir && modal) {
         abrir.addEventListener('click', () => {
-            // limpar erros antigos...
+            form.reset();
+            form.action = form.dataset.createUrl; // URL padrão para criar
+            submitBtn.textContent = 'Salvar';
             show(modal);
-            const primeiroCampo = modal.querySelector('input, select, textarea, button');
+            const primeiroCampo = modal.querySelector('input, select, textarea');
             if (primeiroCampo) primeiroCampo.focus();
         });
     }
@@ -51,20 +51,19 @@ if (abrir && modal) {
     if (cancelar) cancelar.addEventListener('click', () => hide(modal));
     window.addEventListener('click', (e) => { if (e.target === modal) hide(modal); });
 
-    // Submissão AJAX segura
+    // --- SUBMISSÃO AJAX ---
     if (form) {
         form.addEventListener('submit', async function (e) {
             e.preventDefault();
+
             if (!form.action) {
                 mostrarErro("URL de submissão inválida.");
                 return;
             }
 
-            // desativa botão para evitar múltiplos envios
             if (submitBtn) submitBtn.disabled = true;
 
             const formData = new FormData(form);
-            // limpa mensagens anteriores
             modal.querySelectorAll('.field-error').forEach(el => el.textContent = '');
             const globalErr = document.getElementById('form-error-global');
             if (globalErr) globalErr.textContent = '';
@@ -78,51 +77,52 @@ if (abrir && modal) {
                     body: formData
                 });
 
-                // tenta parsear JSON, se falhar mostra erro genérico
                 let data;
                 try {
                     data = await response.json();
-                } catch (err) {
+                } catch {
                     throw new Error('Resposta inválida do servidor.');
                 }
 
                 if (data.success) {
-                    // adiciona linha se tbody existir
-                    if (tbody && data.agendamento) {
+                    // Atualiza tabela dinamicamente
+                    if (tbody && data.usuario) {
                         const row = `
-                            <tr class="border-b border-white hover:bg-blue-900 hover:text-white">
-                                <td class="px-5 py-2">${data.agendamento.codigo_agendamento || ''}</td>
+                            <tr class="hover:bg-blue-800 hover:text-white">
+                                <td class="px-5 py-2">${data.usuario.id || ''}</td>
                                 <td class="px-5 py-2 cursor-pointer hover:underline"
-                                    onclick="abrirDetalhesAgendamento('${data.agendamento.id || ''}')"
-                                    data-id="${data.agendamento.id || ''}">
-                                    ${data.agendamento.nome || ''}
+                                    onclick="abrirDetalhesUsuario('${data.usuario.username || ''}')"
+                                    data-id="${data.usuario.id || ''}">
+                                    ${data.usuario.username || ''}
                                 </td>
-                                <td class="px-5 py-2">${data.agendamento.sala || ''}</td>
-                                <td class="px-5 py-2">${data.agendamento.criador || ''}</td>
-                                <td class="px-5 py-2">${data.agendamento.hora_inicio || ''}</td>
-                                <td class="pl-5 py-2">${data.agendamento.data || ''}</td>
-                                <td class="px-5 py-2 flex gap-3 justify-center">
-                                <button onclick="abrirModalEditar('${data.agendamento.id || ''}')"
-                                        class="hover:underline duration-200">
-                                    ✏️
-                                </button>
-                                <button onclick="abrirModalExcluir('${data.agendamento.id || ''}')"
-                                        class="hover:underline duration-200">
-                                    🗑️
-                                </button>
-                            </td>
+                                <td class="px-5 py-2">${data.usuario.tipo_usuario || ''}</td>
+                                <td class="px-5 py-2">${data.usuario.cargo || ''}</td>
+                                <td class="px-5 py-2 flex rounded-r-xl gap-2">
+                                    <button onclick="abrirModalEditar('${data.usuario.id || ''}')" 
+                                            class="hover:underline duration-200">
+                                        ✏️
+                                    </button>
+                                    <button onclick="abrirModalExcluir('${data.usuario.id || ''}')"
+                                            class="hover:underline duration-200">
+                                        🗑️
+                                    </button>
+                                </td>
                             </tr>
                         `;
-                        tbody.insertAdjacentHTML('beforeend', row);
+                        // Se for edição, substitui linha existente
+                        const existingRow = tbody.querySelector(`tr[data-id="${data.usuario.id}"]`);
+                        if (existingRow) {
+                            existingRow.outerHTML = row;
+                        } else {
+                            tbody.insertAdjacentHTML('beforeend', row);
+                        }
                     }
                     form.reset();
                     hide(modal);
                     mostrarSucesso();
                 } else {
-                    // suporta três formatos de erro esperados:
-                    // 1) data.error (string), 2) data.errors (dict de campo -> lista), 3) mensagens de validação genéricas
+                    // Tratamento de erros
                     if (data.errors && typeof data.errors === 'object') {
-                        // mostra por campo se possível
                         Object.keys(data.errors).forEach(field => {
                             const fieldEl = modal.querySelector(`.field-error[data-field="${field}"]`);
                             if (fieldEl) {
@@ -130,19 +130,16 @@ if (abrir && modal) {
                                 fieldEl.textContent = msgs;
                             }
                         });
-                        // se houver um não-campo, mostra no global
                         if (data.error) {
                             if (globalErr) globalErr.textContent = data.error;
                             else mostrarErro(data.error);
                         } else {
-                            if (globalErr) globalErr.textContent = 'Verifique os campos do formulário.';
-                            else mostrarErro('Verifique os campos do formulário.');
+                            mostrarErro('Verifique os campos do formulário.');
                         }
                     } else if (data.error) {
-                        if (globalErr) globalErr.textContent = data.error;
-                        else mostrarErro(data.error);
+                        mostrarErro(data.error);
                     } else {
-                        mostrarErro('Erro ao salvar o agendamento. Verifique os campos.');
+                        mostrarErro('Erro ao salvar o usuário. Verifique os campos.');
                     }
                 }
             } catch (error) {

@@ -7,16 +7,16 @@
 
 <div class="w-full ">
     <div class="content-center-space" style="min-height: calc(100vh - 25rem - 96px); display:flex; align-items:start; justify-content:center; flex-direction:column; padding:1rem 0;">
-        <h2 class="-mb-1 text-heading-h3">Agendamentos</h2>
-        <p class="-mt-1 text-heading-h5">Consulte aqui todos os seus agendamentos!</p>
+        <h2 class="-mb-1 text-heading-h3">Salas</h2>
+        <p class="-mt-1 text-heading-h5">Gerencie todas as salas do sistema!</p>
     </div>
 
     <div id="modalDetalhes" class="hidden fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm  items-center justify-center z-50">
 </div>
 
     <!-- painel fixo no fim da página com altura específica (ajuste h-96 conforme necessário) -->
-    <div id="agendamentosPanel" class="fixed left-0 right-0 bottom-0 px-20 z-40">
-        <div class="mx-auto w-full bg-blue-0 rounded-t-xl shadow-lg flex flex-col overflow-hidden" style=" height:28rem; ">
+    <div id="salasPanel" class="fixed left-0 right-0 bottom-0 px-20 z-40">
+        <div class="mx-auto w-full bg-blue-0 rounded-t-xl shadow-xl flex flex-col overflow-hidden" style=" height:28rem; ">
             <!-- barra de pesquisa / filtro / botão: não rola -->
             <div class="px-4 py-3 flex items-center gap-4 flex-none">
                 <form class="flex w-full items-center justify-between" method="get" >
@@ -25,11 +25,10 @@
                     <div class="flex items-center ml-4 ">
                         <select id="ordenar_por" name="ordenar_por" onchange="this.form.submit()" class="appearance-none bg-white rounded-md px-2 py-1">
                             <option disabled selected hidden>Filtrar</option>
-                            <option value="nome" {% if ordenar_por == 'nome' %}selected{% endif %}>Nome</option>
-                            <option value="data" {% if ordenar_por == 'data' %}selected{% endif %}>Data</option>
-                            <option value="sala" {% if ordenar_por == 'sala' %}selected{% endif %}>Sala</option>
-                            <option value="criador" {% if ordenar_por == 'criador' %}selected{% endif %}>Criador</option>
                             <option value="codigo_agendamento" {% if ordenar_por == 'codigo_agendamento' %}selected{% endif %}>ID</option>
+                            <option value="nome" {% if ordenar_por == 'nome' %}selected{% endif %}>Nome</option>
+                            <option value="capacidade" {% if ordenar_por == 'capacidade' %}selected{% endif %}>Capacidade</option>
+                            <option value="tipo_sala" {% if ordenar_por == 'tipo_sala' %}selected{% endif %}>Tipo</option>
                         </select>
                         {% if ordenar_por %}
                             <a id="limparFiltro"
@@ -38,43 +37,39 @@
                                 Limpar filtro
                             </a>
                         {% endif %}
-                        <button type="button" id="abrirModal"
+                        <button type="button" id="abrirModalSala"
                                 class="ml-3 px-3 py-1 bg-darkBlue-900 text-white rounded-md hover:bg-blue-800 transition-colors duration-200">
-                            Nova Reunião
+                            Nova Sala
                         </button>
                     </div>
                 </form>
             </div>
 
             <!-- container da tabela com scroll interno -->
-            <div class="flex-1 bg-white overflow-hidden rounded-t-lg">
+            <div class="flex-1 bg-white  overflow-hidden rounded-t-lg">
                 <div class="h-full overflow-y-auto px-7">
                     <table class="min-w-full">
                         <thead class="bg-white sticky top-0">
                             <tr class="border-b border-darkBlue-900">
                                 <th class="text-left px-5 py-2">ID</th>
                                 <th class="text-left px-5 py-2">Nome</th>
-                                <th class="text-left px-5 py-2">Sala</th>
-                                <th class="text-left px-5 py-2">Criador</th>
-                                <th class="text-left px-5 py-2">Horário</th>
-                                <th class="text-left px-5 py-2">Data</th>
-                                <th class="text-left px-5 py-2"></th>
+                                <th class="text-left px-5 py-2">Tipo</th>
+                                <th class="text-left px-5 py-2">Capacidade</th>
+                                <th class="text-left px-5 py-2">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for agendamento in agendamentos %}
-                            <tr class="border-b border-white hover:bg-blue-900 hover:text-white">
-                                <td class="px-5 py-2">{{ agendamento.codigo_agendamento }}</td>
+                            {% for sala in salas %}
+                            <tr class=" border-b border-white hover:bg-blue-900 hover:text-white">
+                                <td class="px-5 py-2">{{ sala.id }}</td>
                                 <td class="px-5 py-2 cursor-pointer hover:underline"
                                     onclick="abrirDetalhesAgendamento('{{ agendamento.id }}')"
                                     data-id="{{ agendamento.id }}">
-                                    {{ agendamento.nome }}
+                                    {{ sala.nome }}
                                 </td>
-                                <td class="px-5 py-2">{{ agendamento.sala }}</td>
-                                <td class="px-5 py-2">{{ agendamento.criador }}</td>
-                                <td class="px-5 py-2">{{ agendamento.hora_inicio }}</td>
-                                <td class="pl-5 py-2">{{ agendamento.data|date:"d/m/Y" }}</td>
-                                <td class="px-5 py-2 flex gap-3 justify-center">
+                                <td class="px-5 py-2">{{ sala.tipo_sala }}</td>
+                                <td class="px-5 py-2">{{ sala.capacidade }}</td>
+                                <td class="px-5 py-2 flex gap-3 justify-start">
                                 <button onclick="abrirModalEditar('{{ agendamento.id }}')" 
                                         class=" hover:underline duration-200">
                                     ✏️ 
@@ -87,7 +82,7 @@
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="6" class="px-4 py-2 text-center">Nenhum agendamento encontrado.</td>
+                                <td colspan="6" class="px-4 py-2 text-center">Nenhuma sala encontrada.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -97,50 +92,46 @@
         </div>
     </div>
 
-
-    <div id="modalAgendamento"
-        class=" hidden fixed inset-0 z-50  items-center justify-center transition-opacity duration-300 opacity-0"
+    <!-- Modal Criar Sala -->
+    <div id="modalSala"
+        class="hidden fixed inset-0 z-50 items-center justify-center transition-opacity duration-300 opacity-0"
         style="background-color: rgba(255,255,255,0.08); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);">
-        <div id="modalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 relative transform scale-95 transition-all duration-300">   
-        <!-- Fechar -->
-            <button id="fecharModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl">✕</button>
 
-            <h2 class="text-2xl font-semibold text-darkBlue-900 mb-6 text-center">Agendar Nova Reunião</h2>
+        <div id="modalContentSala"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-8 relative transform scale-95 transition-all duration-300">
+            
+            <!-- Botão Fechar -->
+            <button id="fecharModalSala" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl">✕</button>
 
-            <form id="formAgendamento" method="POST" action="{% url 'criar_agendamento' %}" class="flex flex-col gap-4">
+            <h2 class="text-2xl font-semibold text-darkBlue-900 mb-6 text-center">Cadastrar Nova Sala</h2>
+
+            <form id="formSala" method="POST" action="{% url 'criar_sala' %}" class="flex flex-col gap-4">
                 {% csrf_token %}
+                
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Reunião</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nome da Sala</label>
                     {{ form.nome|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Participantes</label>
-                    {{ form.usuarios|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Capacidade</label>
+                    {{ form.capacidade|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
                 </div>
+
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
-                    {{ form.data|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
-                </div>
-                <div class="flex gap-3">
-                    <div class="w-1/2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Início</label>
-                        {{ form.hora_inicio|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
-                    </div>
-                    <div class="w-1/2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Término</label>
-                        {{ form.hora_fim|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
-                    {{ form.sala|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo da Sala</label>
+                    {{ form.tipo_sala|add_class:"w-full border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2" }}
                 </div>
 
                 <div class="flex justify-end gap-3 mt-6">
-                    <button type="button" id="cancelarBtn"
-                            class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
-                    <button type="submit" id="submitBtn"
-                            class="px-4 py-2 bg-darkBlue-900 text-white rounded-lg hover:bg-blue-800 transition">Salvar</button>
+                    <button type="button" id="cancelarSalaBtn"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="submitSalaBtn"
+                        class="px-4 py-2 bg-darkBlue-900 text-white rounded-lg hover:bg-blue-800 transition">
+                        Salvar
+                    </button>
                 </div>
             </form>
         </div>
@@ -184,7 +175,8 @@
     </div>
 </div>
 
-<script src="{% static 'js/modal_agendamento.js' %}" defer></script>
+
+<script src="{% static 'js/nova_sala.js' %}" defer></script>
 
 </div>
 {% endblock %}

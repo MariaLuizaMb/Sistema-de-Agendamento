@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -38,6 +39,11 @@
                             {% else %}
                             text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
                             {% endif %}">Usuários</a>
+                        <a href="{% url 'salas' %}" class=" px-6 py-2 text-darkBlue-900 rounded-full transition-colors duration-200 {% if request.resolver_match.url_name == 'salas' %}
+                            bg-darkBlue-900 text-white
+                            {% else %}
+                            text-darkBlue-900 hover:bg-darkBlue-900 hover:text-white active:bg-darkBlue-900 active:text-white
+                            {% endif %}">Salas</a>
                     </div>
                     <div class="flex items-center bg-white px-3 py-1 rounded-full">
                         <a href="{% url 'editar_perfil' %}" class="px-6 py-2 rounded-full transition-colors duration-200

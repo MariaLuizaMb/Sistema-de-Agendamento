@@ -118,7 +118,10 @@
         </div>
     </div>
 
-    <div id="modalEditar" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+    <div id="modalEditar" 
+     class="hidden fixed inset-0 z-50 items-center justify-center transition-opacity duration-300 opacity-0"
+     style="background-color: rgba(255,255,255,0.08); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);">
+    </div>
     <div class="bg-white rounded-lg p-6 w-1/3 shadow-lg">
         <h3 class="text-xl font-semibold mb-4">Editar Agendamento</h3>
         <form id="formEditar">
@@ -157,6 +160,7 @@
 </div>
 
 <script src="{% static 'js/modal_agendamento.js' %}" defer></script>
+<script src="{% static 'js/modal_editar.js' %}" defer></script>
 
 </div>
 {% endblock %}

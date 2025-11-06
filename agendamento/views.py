@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.db.models import Q
-from .models import Agendamento, Usuario
+from .models import Agendamento, Usuario, Sala
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, update_session_auth_hash, logout
 from django.http import JsonResponse
@@ -11,6 +11,8 @@ from django.views.decorators.http import require_POST
 from .form_agendamento import AgendamentoForm
 from .form_registro import RegisterForm
 from .form_usuario import UsuarioForm, CustomPasswordChangeForm
+from .criar_usuario import CriarUsuario
+from .criar_sala import SalaForm
 
 class CustomLoginView(View):
     template_name = 'registration/login.html'
@@ -128,6 +130,8 @@ def listar_usuarios(request):
         'tipo': 'tipo_usuario',
         'cargo': 'cargo',
     }
+    
+    form = CriarUsuario()
 
     campo_ordenacao = opcoes_validas.get(ordenar_por, 'id')  # padrão: ID
     usuarios = usuarios.order_by(campo_ordenacao)
@@ -136,9 +140,12 @@ def listar_usuarios(request):
         'usuarios': usuarios,
         'busca': busca,
         'ordenar_por': ordenar_por,
+        'form': form,
     }
 
     return render(request, 'admin/usuarios_admin.html', context)
+
+
 
 @login_required
 def usuario_agendamentos(request):
@@ -185,7 +192,32 @@ def usuario_agendamentos(request):
         'ordenar_por': ordenar_por,
         'busca': termo_busca,
     })
-    
+
+@login_required
+@require_POST
+@csrf_protect
+def criar_usuario(request):
+    form = CriarUsuario(request.POST)
+
+    if form.is_valid():
+        usuario = form.save()
+        return JsonResponse({
+            'success': True,
+            'usuario': {
+                'id': usuario.id,
+                'username': usuario.username,
+                'email': usuario.email,
+                'first_name': usuario.first_name,
+                'last_name': usuario.last_name,
+                'cargo': usuario.cargo,
+                'tipo_usuario': usuario.tipo_usuario,
+                'is_active': usuario.is_active,
+            }
+        })
+
+    errors = {field: [str(e) for e in errs] for field, errs in form.errors.items()}
+    return JsonResponse({'success': False, 'errors': errors}, status=400)
+
 
 @login_required
 @require_POST
@@ -223,6 +255,62 @@ def criar_agendamento(request):
     
 def is_admin(user):
     return user.is_superuser or user.tipo_usuario == 'Admin'
+
+@login_required
+def criar_sala(request):
+    if request.method == 'POST':
+        form = SalaForm(request.POST)
+        if form.is_valid():
+            sala = form.save(commit=False)
+            sala.criador = request.user
+            sala.save()
+            return JsonResponse({
+                'success': True,
+                'sala': {
+                    'id': sala.id,
+                    'nome': sala.nome,
+                    'capacidade': sala.capacidade,
+                    'tipo_sala': sala.get_tipo_sala_display(),
+                    'criador': sala.criador.username if sala.criador else '-',
+                }
+            })
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    return JsonResponse({'success': False, 'error': 'Método inválido.'})
+
+@login_required
+def listar_salas(request):
+    busca = request.GET.get('busca', '')
+    ordenar_por = request.GET.get('ordenar_por', '')
+
+    salas = Sala.objects.all()
+
+    # Filtro de busca
+    if busca:
+        salas = salas.filter(nome__icontains=busca)
+
+    # Campos válidos para ordenação
+    opcoes_validas = {
+        'id': 'id',
+        'nome': 'nome',
+        'tipo': 'tipo_sala',
+        'capacidade': 'capacidade',
+    }
+
+    campo_ordenacao = opcoes_validas.get(ordenar_por, 'id')
+    salas = salas.order_by(campo_ordenacao)
+
+    # Formulário para criação de sala
+    form = SalaForm()
+
+    context = {
+        'salas': salas,
+        'busca': busca,
+        'ordenar_por': ordenar_por,
+        'form': form,
+    }
+
+    return render(request, 'admin/sala_admin.html', context)
 
 
 @login_required

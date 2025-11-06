@@ -1,0 +1,85 @@
+<div class="relative">
+  <button
+    onclick="fecharModalDetalhes()"
+    class="absolute -top-2 -right-2 text-gray-500 hover:text-gray-800 p-2 text-xl transition"
+  >
+    ✕
+  </button>
+
+  <div class="text-center mb-8">
+    <h3 class="text-2xl font-bold text-darkBlue-900">{{ agendamento.nome }}</h3>
+    <span
+      class="inline-block px-3 py-1 text-sm rounded-full {% if agendamento.status == 'confirmado' %}bg-green-100 text-green-800 {% elif agendamento.status == 'pendente' %}bg-yellow-100 text-yellow-800 {% else %}bg-gray-100 text-gray-800{% endif %}"
+    >
+      {{ agendamento.get_status_display|default:"Agendado" }}
+    </span>
+  </div>
+
+  <div class="space-y-6 text-darkBlue-900">
+    <div class="flex items-start gap-4">
+      <div class="bg-blue-100 p-3 rounded-lg">
+        <span class="text-2xl">📅</span>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 font-bold uppercase">Quando</p>
+        <p class="font-semibold text-lg">
+          {{ agendamento.data|date:"d \d\e F, Y" }}
+          ({{agendamento.data|date:"l"}})
+        </p>
+        <p class="text-gray-700">
+          Das {{ agendamento.hora_inicio }} às {{ agendamento.hora_fim }}
+        </p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-4">
+      <div class="bg-blue-100 p-3 rounded-lg">
+        <span class="text-2xl">🚪</span>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 font-bold uppercase">Onde</p>
+        <p class="font-semibold text-lg">{{ agendamento.sala }}</p>
+      </div>
+    </div>
+
+    <div class="flex items-start gap-4">
+      <div class="bg-blue-100 p-3 rounded-lg">
+        <span class="text-2xl">👤</span>
+      </div>
+      <div>
+        <p class="text-sm text-gray-500 font-bold uppercase">Agendado por</p>
+        <p class="font-semibold text-lg">
+          {{agendamento.criador.get_full_name|default:agendamento.criador.username}}
+        </p>
+      </div>
+    </div>
+
+    {% if agendamento.descricao %}
+    <div class="mt-6 pt-6 border-t border-gray-100">
+      <p class="text-sm text-gray-500 font-bold uppercase mb-2">
+        Pauta / Descrição
+      </p>
+      <div class="bg-gray-50 p-4 rounded-xl text-gray-700 whitespace-pre-line">
+        {{ agendamento.descricao }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if user.is_staff or user == agendamento.criador %}
+  <div class="flex justify-end gap-3 mt-8 pt-6 border-t border-gray-200">
+    <button
+      onclick="fecharModalDetalhes(); abrirModalEditar('{{ agendamento.id }}')"
+      class="px-4 py-2 bg-blue-50 text-blue-900 rounded-lg hover:bg-blue-100 transition flex items-center gap-2 font-medium"
+    >
+      <span>✏️</span> Editar
+    </button>
+    <button
+      onclick="fecharModalDetalhes(); abrirModalExcluir('{{ agendamento.id }}')"
+      class="px-4 py-2 bg-red-50 text-red-900 rounded-lg hover:bg-red-100 transition flex items-center gap-2 font-medium"
+    >
+      <span>🗑️</span> Excluir
+    </button>
+  </div>
+  {% endif %}
+</div>

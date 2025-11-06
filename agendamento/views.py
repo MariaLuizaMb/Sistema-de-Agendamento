@@ -453,3 +453,16 @@ def editar_agendamento_modal(request, pk):
             return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
     return JsonResponse({'success': False, 'error': 'Método inválido.'}, status=405)
+
+@login_required
+def detalhes_agendamento(request, id):
+    agendamento = get_object_or_404(Agendamento, id=id)
+    
+    # Verifica se o usuário pode ver este agendamento (opcional, mas recomendado)
+    # if not request.user.is_staff and agendamento.criador != request.user:
+    #      return HttpResponseForbidden("Você não tem permissão para ver este agendamento.")
+
+    return render(request, 'partials/_detalhes_agendamento.html', {
+        'agendamento': agendamento,
+        'user': request.user # Passamos o user para verificar permissões de botões no template
+    })

@@ -7,11 +7,8 @@ class AgendamentoForm(forms.ModelForm):
         queryset=Usuario.objects.all(),
         required=True,
         label="Participantes",
-        widget=forms.SelectMultiple(attrs={
-            'class': 'bg-darkBlue-400 w-11/12 h-12 px-4 rounded-md placeholder:text-darkBlue-50',
-            'id': 'usuarios',
-            'placeholder': 'Participantes'
-            'multiple'
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'bg-darkBlue-400 w-11/12 h-48 overflow-y-auto p-4 rounded-md space-y-2',
         })
     )
 

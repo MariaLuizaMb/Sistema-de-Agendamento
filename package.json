@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/MariaLuizaMb/Sistema-de-Agendamento/issues"
   },
-  "homepage": "https://github.com/MariaLuizaMb/Sistema-de-Agendamento#readme"
+  "homepage": "https://github.com/MariaLuizaMb/Sistema-de-Agendamento#readme",
+  "dependencies": {
+    "@tailwindcss/forms": "^0.5.10"
+  }
 }

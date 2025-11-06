@@ -1,0 +1,80 @@
+<form id="formAgendamento" method="POST" action="{% url 'criar_agendamento' %}" class="flex flex-col gap-4">
+    {% csrf_token %}
+
+    {% with input_class="w-full border border-gray-300 rounded-lg focus:ring-darkBlue-900 focus:border-darkBlue-900 px-3 py-2 text-gray-700" %}
+
+    <div>
+        <label for="id_nome" class="block text-sm font-medium text-gray-700 mb-1">Nome da Reunião</label>
+        <input type="text" name="nome" id="id_nome" class="{{ input_class }}" value="{{ form.nome.value|default:'' }}"
+            placeholder="Digite o nome da reunião">
+        {% if form.nome.errors %}
+            <p class="mt-1 text-sm text-red-500">{{ form.nome.errors|first }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">{{ form.usuarios.label }}</label>
+        <div class="w-full border border-gray-300 rounded-lg p-3
+                    focus-within:ring-1 focus-within:ring-darkBlue-900 focus-within:border-darkBlue-900
+                    h-32 overflow-y-auto space-y-2">
+            
+            {% for checkbox in form.usuarios %}
+            <div class="flex items-center">
+                <input type="checkbox" name="{{ checkbox.name }}" id="{{ checkbox.id_for_label }}"
+                       value="{{ checkbox.value }}" {% if checkbox.data.selected %}checked{% endif %}
+                       class="form-checkbox h-4 w-4 rounded border-gray-400 text-darkBlue-900 focus:ring-darkBlue-800">
+                <label for="{{ checkbox.id_for_label }}" class="ml-3 text-sm font-medium text-gray-700">
+                    {{ checkbox.choice_label }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% if form.usuarios.errors %}
+            <p class="mt-1 text-sm text-red-500">{{ form.usuarios.errors|first }}</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <label for="id_data" class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+        <input type="date" name="data" id="id_data" class="{{ input_class }}" value="{{ form.data.value|default:'' }}">
+        {% if form.data.errors %}
+            <p class="mt-1 text-sm text-red-500">{{ form.data.errors|first }}</p>
+        {% endif %}
+    </div>
+
+    <div class="flex gap-3">
+        <div class="w-1/2">
+            <label for="id_hora_inicio" class="block text-sm font-medium text-gray-700 mb-1">Início</label>
+            <input type="time" name="hora_inicio" id="id_hora_inicio" class="{{ input_class }}" value="{{ form.hora_inicio.value|default:'' }}">
+            {% if form.hora_inicio.errors %}
+                <p class="mt-1 text-sm text-red-500">{{ form.hora_inicio.errors|first }}</p>
+            {% endif %}
+        </div>
+        <div class="w-1/2">
+            <label for="id_hora_fim" class="block text-sm font-medium text-gray-700 mb-1">Término</label>
+            <input type="time" name="hora_fim" id="id_hora_fim" class="{{ input_class }}" value="{{ form.hora_fim.value|default:'' }}">
+            {% if form.hora_fim.errors %}
+                <p class="mt-1 text-sm text-red-500">{{ form.hora_fim.errors|first }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div>
+        <label for="id_sala" class="block text-sm font-medium text-gray-700 mb-1">Sala</label>
+        <select name="sala" id="id_sala" class="{{ input_class }}">
+            {% for value, text in form.sala.field.choices %}
+                <option value="{{ value }}" {% if form.sala.value|stringformat:"s" == value|stringformat:"s" %}selected{% endif %}>{{ text }}</option>
+            {% endfor %}
+        </select>
+        {% if form.sala.errors %}
+            <p class="mt-1 text-sm text-red-500">{{ form.sala.errors|first }}</p>
+        {% endif %}
+    </div>
+    
+    {% endwith %} <div class="flex justify-end gap-3 mt-6">
+        <button type="button" id="cancelarBtn"
+                class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">Cancelar</button>
+        <button type="submit" id="submitBtn"
+                class="px-4 py-2 bg-darkBlue-900 text-white rounded-lg hover:bg-blue-800 transition">Salvar</button>
+    </div>
+</form>

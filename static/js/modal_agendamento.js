@@ -163,3 +163,66 @@ if (abrir && modal) {
         });
     }
 });
+
+let agendamentoIdParaExcluir = null;
+
+function abrirModalExcluir(id) {
+    agendamentoIdParaExcluir = id;
+    const modal = document.getElementById('modalExcluir');
+    if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
+function fecharModalExcluir() {
+    agendamentoIdParaExcluir = null;
+    const modal = document.getElementById('modalExcluir');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+async function confirmarExclusao() {
+    if (!agendamentoIdParaExcluir) return;
+
+    try {
+        const response = await fetch(`/agendamentos/excluir/${agendamentoIdParaExcluir}/`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            window.location.reload();
+        } else {
+            alert(data.error || 'Erro ao excluir o agendamento.');
+        }
+    } catch (error) {
+        console.error('Erro na exclusão:', error);
+        alert('Erro de conexão com o servidor.');
+    } finally {
+        fecharModalExcluir();
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

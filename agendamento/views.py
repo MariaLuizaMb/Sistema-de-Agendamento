@@ -13,6 +13,7 @@ from .form_registro import RegisterForm
 from .form_usuario import UsuarioForm, CustomPasswordChangeForm
 from .criar_usuario import CriarUsuario
 from .criar_sala import SalaForm
+from django.views.decorators.http import require_http_methods
 
 class CustomLoginView(View):
     template_name = 'registration/login.html'
@@ -385,3 +386,20 @@ def detalhes_agendamento(request, agendamento_id):
         return render(request, "modal_agendamento.html", context)
 
     return render(request, "index.html", context)
+
+@login_required
+@require_http_methods(["DELETE", "POST"]) 
+def excluir_agendamento(request, agendamento_id):
+    if not is_admin(request.user):
+        return JsonResponse({
+            'success': False,
+            'error': 'Você não tem permissão para realizar esta ação.'
+        }, status=403)
+
+    agendamento = get_object_or_404(Agendamento, id=agendamento_id)
+
+    try:
+        agendamento.delete()
+        return JsonResponse({'success': True, 'message': 'Agendamento excluído com sucesso!'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
